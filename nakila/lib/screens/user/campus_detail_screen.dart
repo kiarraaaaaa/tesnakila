@@ -1,0 +1,343 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import '../../models/campus_model.dart';
+class CampusDetailScreen extends StatelessWidget {
+  final CampusModel campus;
+
+  const CampusDetailScreen({
+    super.key,
+    required this.campus,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xffF8FAFC),
+
+      body: CustomScrollView(
+        slivers: [
+
+          SliverAppBar(
+            expandedHeight: 320,
+            pinned: true,
+
+            backgroundColor:
+                const Color(0xff1E40AF),
+
+            flexibleSpace:
+                FlexibleSpaceBar(
+              background: Hero(
+                tag: campus.id,
+
+                child: Image.asset(
+                  campus.image,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ),
+
+          SliverToBoxAdapter(
+            child: Padding(
+              padding:
+                  const EdgeInsets.all(20),
+
+              child: Column(
+                crossAxisAlignment:
+                    CrossAxisAlignment.start,
+
+                children: [
+
+                  Row(
+                    children: [
+
+                      Expanded(
+                        child: Text(
+                          campus.name,
+
+                          style:
+                              GoogleFonts
+                                  .poppins(
+                            fontSize: 28,
+                            fontWeight:
+                                FontWeight
+                                    .bold,
+                          ),
+                        ),
+                      ),
+
+                      if (campus.verified)
+                        const Icon(
+                          Icons.verified,
+                          color: Colors.blue,
+                        ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  Row(
+                    children: [
+
+                      const Icon(
+                        Icons.star,
+                        color:
+                            Colors.orange,
+                      ),
+
+                      const SizedBox(width: 5),
+
+                      Text(
+                        campus.rating
+                            .toString(),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  Container(
+                    padding:
+                        const EdgeInsets.all(
+                      16,
+                    ),
+
+                    decoration:
+                        BoxDecoration(
+                      color:
+                          Colors.white,
+
+                      borderRadius:
+                          BorderRadius
+                              .circular(
+                        20,
+                      ),
+                    ),
+
+                    child: Row(
+                      mainAxisAlignment:
+                          MainAxisAlignment
+                              .spaceAround,
+
+                      children: [
+
+                        _infoItem(
+                          "Founded",
+                          campus.foundedYear,
+                        ),
+
+                        _infoItem(
+                          "Ranking",
+                          campus.worldRanking,
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 25),
+
+                  Text(
+                    "Description",
+
+                    style:
+                        GoogleFonts.poppins(
+                      fontWeight:
+                          FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  Text(
+                    campus.description,
+
+                    style:
+                        GoogleFonts.poppins(
+                      height: 1.7,
+                    ),
+                  ),
+
+                  const SizedBox(height: 25),
+
+                  Text(
+                    "History",
+
+                    style:
+                        GoogleFonts.poppins(
+                      fontWeight:
+                          FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  Text(
+                    campus.history,
+
+                    style:
+                        GoogleFonts.poppins(
+                      height: 1.7,
+                    ),
+                  ),
+
+                  const SizedBox(height: 25),
+
+                  Text(
+                    "Achievements",
+
+                    style:
+                        GoogleFonts.poppins(
+                      fontWeight:
+                          FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+
+                  const SizedBox(height: 15),
+
+                  ...campus.achievements
+                      .map(
+                        (achievement) =>
+                            ListTile(
+                          leading:
+                              const Icon(
+                            Icons.emoji_events,
+                            color:
+                                Colors.amber,
+                          ),
+                          title: Text(
+                            achievement,
+                          ),
+                        ),
+                      ),
+
+                  const SizedBox(height: 25),
+
+                  Text(
+                    "Programs",
+
+                    style:
+                        GoogleFonts.poppins(
+                      fontWeight:
+                          FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+
+                  const SizedBox(height: 15),
+
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+
+                    children: campus
+                        .programs
+                        .map(
+                          (program) =>
+                              Chip(
+                            label:
+                                Text(
+                              program,
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  ),
+
+                  const SizedBox(height: 30),
+
+                  Text(
+                    "Reviews",
+
+                    style:
+                        GoogleFonts.poppins(
+                      fontWeight:
+                          FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+
+                  const SizedBox(height: 15),
+
+                  Container(
+                    padding:
+                        const EdgeInsets.all(
+                      20,
+                    ),
+
+                    decoration:
+                        BoxDecoration(
+                      color:
+                          Colors.white,
+
+                      borderRadius:
+                          BorderRadius
+                              .circular(
+                        20,
+                      ),
+                    ),
+
+                    child: const Center(
+                      child: Text(
+                        "No reviews yet",
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 30),
+
+                  SizedBox(
+                    width:
+                        double.infinity,
+                    height: 55,
+
+                    child:
+                        ElevatedButton.icon(
+                      onPressed: () {},
+
+                      icon: const Icon(
+                        Icons.rate_review,
+                      ),
+
+                      label: const Text(
+                        "Write Review",
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 40),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _infoItem(
+    String title,
+    String value,
+  ) {
+    return Column(
+      children: [
+
+        Text(
+          value,
+          style: const TextStyle(
+            fontWeight:
+                FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+
+        const SizedBox(height: 5),
+
+        Text(title),
+      ],
+    );
+  }
+}

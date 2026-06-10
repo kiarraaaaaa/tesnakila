@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'register_screen.dart';
+import '../../services/login_service.dart';
+import '../admin/admin_dashboard_screen.dart';
+import '../user/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -92,7 +95,7 @@ class _LoginScreenState
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black
-                            .withOpacity(0.1),
+                            .withValues(alpha: 0.1),
                         blurRadius: 20,
                       )
                     ],
@@ -207,9 +210,57 @@ class _LoginScreenState
 
                         child:
                             ElevatedButton(
-                          onPressed: () {
+                          onPressed: ()  async {
 
+  final userData =
+      await LoginService().login(
+    email: emailController.text.trim(),
+    password: passwordController.text.trim(),
+  );
+
+  if (userData == null) {
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context)
+        .showSnackBar(
+      const SnackBar(
+        content: Text(
+          "Email atau password salah",
+        ),
+      ),
+    );
+
+    return;
+  }
+
+  String role =
+      userData["role"] ?? "user";
+
+  if (!mounted) return;
+
+  if (role == "admin") {
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) =>
+            AdminDashboardScreen(),
+      ),
+    );
+
+  } else {
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) =>
+            HomeScreen(),
+      ),
+    );
+  }
                           },
+  
                           style:
                               ElevatedButton
                                   .styleFrom(

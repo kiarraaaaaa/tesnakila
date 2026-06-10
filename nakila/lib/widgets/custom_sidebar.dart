@@ -1,0 +1,362 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+class CustomSidebar extends StatelessWidget {
+  final String userName;
+  final String role;
+  final String profileImage;
+  final int selectedIndex;
+
+  final Function(int) onItemTap;
+
+  const CustomSidebar({
+    super.key,
+    required this.userName,
+    required this.role,
+    required this.profileImage,
+    required this.selectedIndex,
+    required this.onItemTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 270,
+
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color(0xff0F172A),
+            Color(0xff172554),
+          ],
+        ),
+      ),
+
+      child: SafeArea(
+        child: Column(
+          children: [
+
+            const SizedBox(height: 20),
+
+            /// LOGO
+            Container(
+              margin: const EdgeInsets.symmetric(
+                horizontal: 16,
+              ),
+              padding: const EdgeInsets.all(14),
+
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(.08),
+                borderRadius:
+                    BorderRadius.circular(18),
+              ),
+
+              child: Row(
+                children: [
+
+                  Container(
+                    height: 50,
+                    width: 50,
+
+                    decoration: BoxDecoration(
+                      borderRadius:
+                          BorderRadius.circular(15),
+
+                      color: Colors.white,
+                    ),
+
+                    child: const Icon(
+                      Icons.school,
+                      color: Color(0xff2563EB),
+                    ),
+                  ),
+
+                  const SizedBox(width: 12),
+
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment:
+                          CrossAxisAlignment.start,
+                      children: [
+
+                        Text(
+                          "NAKILA",
+                          style:
+                              GoogleFonts.poppins(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight:
+                                FontWeight.bold,
+                          ),
+                        ),
+
+                        Row(
+                          children: [
+
+                            const Icon(
+                              Icons.verified,
+                              color: Colors.blue,
+                              size: 16,
+                            ),
+
+                            const SizedBox(width: 4),
+
+                            Text(
+                              "Verified App",
+                              style:
+                                  GoogleFonts.poppins(
+                                color:
+                                    Colors.white70,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 30),
+
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+
+                  _menuTile(
+                    icon: Icons.home_rounded,
+                    title: "Home",
+                    index: 0,
+                  ),
+
+                  _menuTile(
+                    icon: Icons.favorite_rounded,
+                    title: "Favorites",
+                    index: 1,
+                  ),
+
+                  _menuTile(
+                    icon: Icons.person_rounded,
+                    title: "Profile",
+                    index: 2,
+                  ),
+
+                  _menuTile(
+                    icon: Icons.info_outline_rounded,
+                    title: "About App",
+                    index: 3,
+                  ),
+                ],
+              ),
+            ),
+
+            const Divider(
+              color: Colors.white24,
+            ),
+
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Container(
+                padding:
+                    const EdgeInsets.all(12),
+
+                decoration: BoxDecoration(
+                  color:
+                      Colors.white.withOpacity(.08),
+
+                  borderRadius:
+                      BorderRadius.circular(18),
+                ),
+
+                child: Row(
+                  children: [
+
+                    CircleAvatar(
+                      radius: 25,
+                      backgroundImage:
+                          AssetImage(
+                        profileImage,
+                      ),
+                    ),
+
+                    const SizedBox(width: 12),
+
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment:
+                            CrossAxisAlignment.start,
+                        children: [
+
+                          Row(
+                            children: [
+
+                              Expanded(
+                                child: Text(
+                                  userName,
+                                  overflow:
+                                      TextOverflow
+                                          .ellipsis,
+                                  style:
+                                      GoogleFonts
+                                          .poppins(
+                                    color:
+                                        Colors.white,
+                                    fontWeight:
+                                        FontWeight
+                                            .w600,
+                                  ),
+                                ),
+                              ),
+
+                              const Icon(
+                                Icons.verified,
+                                color:
+                                    Colors.blue,
+                                size: 16,
+                              ),
+                            ],
+                          ),
+
+                          Text(
+                            role,
+                            style:
+                                GoogleFonts.poppins(
+                              color:
+                                  Colors.white60,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 10,
+              ),
+
+              child: SizedBox(
+                width: double.infinity,
+                height: 50,
+
+                child: ElevatedButton.icon(
+                  onPressed: () {},
+
+                  icon: const Icon(
+                    Icons.logout_rounded,
+                    color: Colors.white,
+                  ),
+
+                  label: Text(
+                    "Logout",
+                    style:
+                        GoogleFonts.poppins(
+                      color: Colors.white,
+                      fontWeight:
+                          FontWeight.w600,
+                    ),
+                  ),
+
+                  style:
+                      ElevatedButton.styleFrom(
+                    backgroundColor:
+                        const Color(
+                            0xff2563EB),
+
+                    shape:
+                        RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(
+                              16),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 10),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _menuTile({
+    required IconData icon,
+    required String title,
+    required int index,
+  }) {
+    bool isSelected =
+        selectedIndex == index;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 12,
+        vertical: 5,
+      ),
+
+      child: InkWell(
+        borderRadius:
+            BorderRadius.circular(16),
+
+        onTap: () {
+          onItemTap(index);
+        },
+
+        child: AnimatedContainer(
+          duration:
+              const Duration(milliseconds: 250),
+
+          padding:
+              const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
+
+          decoration: BoxDecoration(
+            color: isSelected
+                ? const Color(
+                    0xff2563EB)
+                : Colors.transparent,
+
+            borderRadius:
+                BorderRadius.circular(16),
+          ),
+
+          child: Row(
+            children: [
+
+              Icon(
+                icon,
+                color: Colors.white,
+              ),
+
+              const SizedBox(width: 15),
+
+              Text(
+                title,
+                style:
+                    GoogleFonts.poppins(
+                  color: Colors.white,
+                  fontWeight:
+                      FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
