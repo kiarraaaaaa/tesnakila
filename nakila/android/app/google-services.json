@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "332133720683",
+    "firebase_url": "https://nakilaa-1606c-default-rtdb.firebaseio.com",
+    "project_id": "nakilaa-1606c",
+    "storage_bucket": "nakilaa-1606c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:332133720683:android:2c9fb7b3d6f3e35507872e",
+        "android_client_info": {
+          "package_name": "com.example.nakila"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "332133720683-1ac4roedm7in7mul2tuojurg0o14j0c2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzM5tTb2UdCu-WmXZEkc5X0RqxVD2YFWk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "332133720683-1ac4roedm7in7mul2tuojurg0o14j0c2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
