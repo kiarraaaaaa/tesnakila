@@ -1,42 +1,30 @@
-import 'dart:io';
+
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 import '../models/review_model.dart';
 
 class ReviewService {
+  Future<void> addReply({
+  required String reviewId,
+  required Map<String, dynamic> reply,
+}) async {
 
+  await _firestore
+      .collection("reviews")
+      .doc(reviewId)
+      .update({
+
+    "replies":
+        FieldValue.arrayUnion(
+      [reply],
+    ),
+  });
+}
   final FirebaseFirestore _firestore =
       FirebaseFirestore.instance;
 
-  final FirebaseStorage _storage =
-      FirebaseStorage.instance;
 
-  Future<String> uploadReviewImage(
-    File image,
-  ) async {
-
-    String fileName =
-        DateTime.now()
-            .millisecondsSinceEpoch
-            .toString();
-
-    Reference ref = _storage
-        .ref()
-        .child(
-          "review_images/$fileName.jpg",
-        );
-
-    UploadTask uploadTask =
-        ref.putFile(image);
-
-    TaskSnapshot snapshot =
-        await uploadTask;
-
-    return await snapshot.ref
-        .getDownloadURL();
-  }
 
   Future<void> addReview({
     required ReviewModel review,
@@ -49,7 +37,15 @@ class ReviewService {
           review.toMap(),
         );
   }
+ Future<void> deleteReview(
+  String reviewId,
+) async {
 
+  await _firestore
+      .collection("reviews")
+      .doc(reviewId)
+      .delete();
+}
   Stream<List<ReviewModel>>
       getReviewsByCampus(
     String campusId,
@@ -57,11 +53,15 @@ class ReviewService {
 
     return _firestore
         .collection("reviews")
-        .where(
-          "campusId",
-          isEqualTo: campusId,
-        )
-        .snapshots()
+.where(
+  "campusId",
+  isEqualTo: campusId,
+)
+.orderBy(
+  "createdAt",
+  descending: true,
+)
+.snapshots()
         .map((snapshot) {
 
       return snapshot.docs

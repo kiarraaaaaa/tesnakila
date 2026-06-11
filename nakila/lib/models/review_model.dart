@@ -5,7 +5,7 @@ class ReviewModel {
 
   final String userId;
   final String userName;
-
+  final List<Map<String, dynamic>> replies;
   final String userImage;
 
   final String reviewText;
@@ -26,6 +26,7 @@ class ReviewModel {
     required this.reviewImage,
     required this.rating,
     required this.createdAt,
+this.replies = const [],
   });
 
   factory ReviewModel.fromMap(
@@ -62,6 +63,11 @@ class ReviewModel {
                     "",
               ) ??
               DateTime.now(),
+              replies:
+    List<Map<String, dynamic>>.from(
+      map["replies"] ?? [],
+    ),
+
     );
   }
 
@@ -77,6 +83,7 @@ class ReviewModel {
       "rating": rating,
       "createdAt":
           createdAt.toIso8601String(),
+          "replies": replies,
     };
   }
 }

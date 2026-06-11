@@ -136,8 +136,8 @@ class _ManageReviewsScreenState
                       BoxShadow(
                         color: Colors
                             .black
-                            .withOpacity(
-                          .05,
+                            .withValues(
+                          alpha: .05,
                         ),
                         blurRadius:
                             12,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import '../../services/review_service.dart';
+import '../../models/review_model.dart';
+import 'add_review_screen.dart';
 import '../../models/campus_model.dart';
 class CampusDetailScreen extends StatelessWidget {
   final CampusModel campus;
@@ -262,30 +264,205 @@ class CampusDetailScreen extends StatelessWidget {
 
                   const SizedBox(height: 15),
 
-                  Container(
-                    padding:
-                        const EdgeInsets.all(
-                      20,
+                  StreamBuilder<List<ReviewModel>>(
+  stream: ReviewService()
+      .getReviewsByCampus(
+    campus.id,
+  ),
+
+  builder: (
+    context,
+    snapshot,
+  ) {
+
+    if (!snapshot.hasData) {
+
+      return const Center(
+        child:
+            CircularProgressIndicator(),
+      );
+    }
+
+    final reviews =
+        snapshot.data!;
+
+    if (reviews.isEmpty) {
+
+      return Container(
+        padding:
+            const EdgeInsets.all(
+          20,
+        ),
+
+        decoration:
+            BoxDecoration(
+          color: Colors.white,
+          borderRadius:
+              BorderRadius.circular(
+            20,
+          ),
+        ),
+
+        child: const Center(
+          child: Text(
+            "No reviews yet",
+          ),
+        ),
+      );
+    }
+
+    return Column(
+      children:
+          reviews.map(
+        (review) {
+
+          return Container(
+            margin:
+                const EdgeInsets.only(
+              bottom: 15,
+            ),
+
+            padding:
+                const EdgeInsets.all(
+              16,
+            ),
+
+            decoration:
+                BoxDecoration(
+              color: Colors.white,
+              borderRadius:
+                  BorderRadius.circular(
+                20,
+              ),
+            ),
+
+            child: Column(
+              crossAxisAlignment:
+                  CrossAxisAlignment
+                      .start,
+
+              children: [
+
+                Row(
+                  children: [
+
+                    CircleAvatar(
+                      backgroundImage:
+                          review.userImage
+                                  .isNotEmpty
+                              ? NetworkImage(
+                                  review.userImage,
+                                )
+                              : null,
+
+                      child:
+                          review.userImage
+                                  .isEmpty
+                              ? const Icon(
+                                  Icons.person,
+                                )
+                              : null,
                     ),
 
-                    decoration:
-                        BoxDecoration(
-                      color:
-                          Colors.white,
+                    const SizedBox(
+                      width: 10,
+                    ),
 
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment:
+                            CrossAxisAlignment
+                                .start,
+
+                        children: [
+
+                          Text(
+                            review.userName,
+                            style:
+                                GoogleFonts
+                                    .poppins(
+                              fontWeight:
+                                  FontWeight
+                                      .bold,
+                            ),
+                          ),
+
+                          Text(
+                            review.createdAt
+                                .toString(),
+                            style:
+                                GoogleFonts
+                                    .poppins(
+                              fontSize: 12,
+                              color:
+                                  Colors.grey,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(
+                  height: 10,
+                ),
+
+                Row(
+                  children: List.generate(
+                    review.rating
+                        .toInt(),
+
+                    (index) =>
+                        const Icon(
+                      Icons.star,
+                      color:
+                          Colors.orange,
+                      size: 18,
+                    ),
+                  ),
+                ),
+
+                const SizedBox(
+                  height: 10,
+                ),
+
+                Text(
+                  review.reviewText,
+                ),
+
+                if (review
+                    .reviewImage
+                    .isNotEmpty)
+
+                  Padding(
+                    padding:
+                        const EdgeInsets
+                            .only(
+                      top: 10,
+                    ),
+
+                    child: ClipRRect(
                       borderRadius:
                           BorderRadius
                               .circular(
-                        20,
+                        12,
                       ),
-                    ),
 
-                    child: const Center(
-                      child: Text(
-                        "No reviews yet",
+                      child: Image.network(
+                        review
+                            .reviewImage,
                       ),
                     ),
                   ),
+              ],
+            ),
+          );
+        },
+      ).toList(),
+    );
+  },
+),
 
                   const SizedBox(height: 30),
 
@@ -296,7 +473,19 @@ class CampusDetailScreen extends StatelessWidget {
 
                     child:
                         ElevatedButton.icon(
-                      onPressed: () {},
+                      onPressed: () {
+
+  Navigator.push(
+    context,
+
+    MaterialPageRoute(
+      builder: (_) =>
+          AddReviewScreen(
+        campus: campus,
+      ),
+    ),
+  );
+},
 
                       icon: const Icon(
                         Icons.rate_review,
