@@ -547,7 +547,42 @@ class _HomeScreenState
     campus.id,
   );
 
-  setState(() {});
+  setState(() {
+
+    final index =
+        campuses.indexWhere(
+      (e) => e.id == campus.id,
+    );
+
+    if (index != -1) {
+
+      campuses[index] =
+          CampusModel(
+        id: campus.id,
+        name: campus.name,
+        image: campus.image,
+        location: campus.location,
+        country: campus.country,
+        rating: campus.rating,
+        verified: campus.verified,
+        description:
+            campus.description,
+        history:
+            campus.history,
+        foundedYear:
+            campus.foundedYear,
+        worldRanking:
+            campus.worldRanking,
+        achievements:
+            campus.achievements,
+        programs:
+            campus.programs,
+
+        isFavorite:
+            !campus.isFavorite,
+      );
+    }
+  });
 },
                                     );
                                   },

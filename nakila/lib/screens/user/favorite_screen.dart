@@ -1,98 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../models/campus_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:nakila/models/campus_model.dart';
+
+import '../../services/favorite_service.dart';
+import '../../services/campus_service.dart';
+
 import '../../widgets/campus_card.dart';
+
 import 'campus_detail_screen.dart';
 
-class FavoriteScreen extends StatefulWidget {
-  const FavoriteScreen({super.key});
-
-  @override
-  State<FavoriteScreen> createState() =>
-      _FavoriteScreenState();
-}
-
-class _FavoriteScreenState
-    extends State<FavoriteScreen> {
-
-  late List<CampusModel> favorites;
-
-  @override
-  void initState() {
-    super.initState();
-
-    favorites = [
-      CampusModel(
-        id: "harvard",
-
-        name:
-            "Harvard University",
-
-        image:
-            "assets/Additional/Harvard.png",
-
-        location:
-            "Cambridge",
-
-        country:
-            "United States",
-
-        rating: 4.9,
-
-        verified: true,
-
-        foundedYear:
-            "1636",
-
-        worldRanking:
-            "#4",
-
-        description:
-            "Harvard University is one of the most prestigious universities in the world.",
-
-        history:
-            "Founded in 1636, Harvard is the oldest institution of higher education in the United States.",
-
-        achievements: [
-          "161 Nobel Prize Winners",
-          "8 US Presidents",
-          "Global Research Excellence",
-        ],
-
-        programs: [
-          "Business",
-          "Law",
-          "Medicine",
-          "Engineering",
-        ],
-
-        isFavorite: true,
-      ),
-    ];
-  }
-
-  void removeFavorite(
-    CampusModel campus,
-  ) {
-
-    setState(() {
-      favorites.removeWhere(
-        (item) =>
-            item.id ==
-            campus.id,
-      );
-    });
-
-    ScaffoldMessenger.of(context)
-        .showSnackBar(
-      SnackBar(
-        content: Text(
-          "${campus.name} removed from favorites",
-        ),
-      ),
-    );
-  }
+class FavoriteScreen extends StatelessWidget {
+  const FavoriteScreen({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -123,9 +45,29 @@ class _FavoriteScreenState
         ),
       ),
 
-      body: favorites.isEmpty
+      body: StreamBuilder<
+          QuerySnapshot>(
+        stream:
+            FavoriteService()
+                .getFavorites(),
 
-          ? Center(
+        builder:
+            (context, snapshot) {
+
+          if (!snapshot.hasData) {
+
+            return const Center(
+              child:
+                  CircularProgressIndicator(),
+            );
+          }
+
+          final docs =
+              snapshot.data!.docs;
+
+          if (docs.isEmpty) {
+
+            return Center(
               child: Column(
                 mainAxisAlignment:
                     MainAxisAlignment
@@ -177,63 +119,78 @@ class _FavoriteScreenState
                   ),
                 ],
               ),
-            )
+            );
+          }
 
-          : Padding(
-              padding:
-                  const EdgeInsets
-                      .all(20),
+          return Padding(
+            padding:
+                const EdgeInsets
+                    .all(20),
 
-              child: GridView.builder(
-                itemCount:
-                    favorites.length,
+            child: ListView.builder(
+  itemCount: docs.length,
 
-                gridDelegate:
-                    const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount:
-                      1,
+  itemBuilder:
+      (context, index) {
 
-                  childAspectRatio:
-                      0.9,
-                ),
+                final campusId =
+                    docs[index]
+                        ["campusId"];
 
-                itemBuilder:
-                    (
-                  context,
-                  index,
-                ) {
+                final campus =
+                    CampusService
+                        .getCampusById(
+                  campusId,
+                );
 
-                  final campus =
-                      favorites[
-                          index];
+                return CampusCard(
+  campus: CampusModel(
+    id: campus.id,
+    name: campus.name,
+    image: campus.image,
+    location: campus.location,
+    country: campus.country,
+    rating: campus.rating,
+    verified: campus.verified,
+    description: campus.description,
+    history: campus.history,
+    foundedYear: campus.foundedYear,
+    worldRanking: campus.worldRanking,
+    achievements: campus.achievements,
+    programs: campus.programs,
 
-                  return CampusCard(
-                    campus:
-                        campus,
+    isFavorite: true,
+  ),
 
-                    onTap: () {
+                  onTap: () {
 
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) =>
-                              CampusDetailScreen(
-                            campus:
-                                campus,
-                          ),
+                    Navigator.push(
+                      context,
+
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            CampusDetailScreen(
+                          campus:
+                              campus,
                         ),
-                      );
-                    },
+                      ),
+                    );
+                  },
 
-                    onFavoriteTap: () {
-                      removeFavorite(
-                        campus,
-                      );
-                    },
-                  );
-                },
-              ),
+                  onFavoriteTap:
+                      () async {
+
+                    await FavoriteService()
+                        .toggleFavorite(
+                      campus.id,
+                    );
+                  },
+                );
+              },
             ),
+          );
+        },
+      ),
     );
   }
 }

@@ -8,12 +8,13 @@ class CampusCard extends StatelessWidget {
 
   final VoidCallback onTap;
   final VoidCallback onFavoriteTap;
-
+  
   const CampusCard({
     super.key,
     required this.campus,
     required this.onTap,
     required this.onFavoriteTap,
+    
   });
 
   @override
@@ -22,7 +23,7 @@ class CampusCard extends StatelessWidget {
       onTap: onTap,
 
       child: Container(
-        width: 320,
+        width: 260,
 
         margin: const EdgeInsets.only(
           right: 20,
@@ -37,8 +38,8 @@ class CampusCard extends StatelessWidget {
 
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(
-                .08,
+              color: Colors.black.withValues(
+                alpha: .08,
               ),
               blurRadius: 15,
               offset: const Offset(
