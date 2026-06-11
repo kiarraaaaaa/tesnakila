@@ -142,7 +142,7 @@ class AboutScreen extends StatelessWidget {
 
             _teamCard(
               image:
-                  "assets/User/bella.jpeg",
+                  "assets/User/bella.jpg",
 
               name: "Bella",
 
@@ -166,12 +166,12 @@ class AboutScreen extends StatelessWidget {
 
             _teamCard(
               image:
-                  "assets/User/nabila.jpeg",
+                  "assets/User/nabila.jpg",
 
               name: "Nabila",
 
               role:
-                  "Mobile Developer",
+                  "Website Developer",
             ),
 
             const SizedBox(height: 30),
@@ -255,8 +255,8 @@ class AboutScreen extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color:
-                Colors.black.withOpacity(
-              .05,
+                Colors.black.withValues(
+              alpha: .05,
             ),
             blurRadius: 12,
           ),

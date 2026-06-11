@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import '../../services/user_service.dart';
 import '../../models/campus_model.dart';
 import '../../widgets/campus_card.dart';
 import '../../widgets/custom_sidebar.dart';
@@ -222,19 +222,38 @@ class _HomeScreenState
         children: [
 
           if (desktop)
+  StreamBuilder(
+    stream: UserService().getCurrentUser(),
+    builder: (context, snapshot) {
 
-            CustomSidebar(
-              userName: "Handy",
-              role: "Student",
+      if (!snapshot.hasData) {
+        return const SizedBox();
+      }
 
-              profileImage:
-                  "assets/Additional/Profile.png",
+      final user =
+          snapshot.data!.data()!;
 
-              selectedIndex: 0,
+      return CustomSidebar(
+        userName:
+            user["name"] ?? "",
 
-              onItemTap: openScreen,
-            ),
+        role:
+            user["role"] == "admin"
+                ? "System Administrator"
+                : "Student",
 
+        profileImage:
+            user["photoUrl"] ??
+                user["photoUrl"] ?? "",
+
+        selectedIndex: 0,
+
+        onItemTap: openScreen,
+      );
+    },
+  ),
+
+  
           Expanded(
             child: SafeArea(
               child: Column(
@@ -482,6 +501,7 @@ class _HomeScreenState
                                   },
                                 )
                                 .toList(),
+                        
                           ),
                         ],
                       ),
@@ -493,28 +513,6 @@ class _HomeScreenState
           ),
         ],
       ),
-
-      drawer: desktop
-          ? null
-          : Drawer(
-              child:
-                  CustomSidebar(
-                userName:
-                    "Handy",
-
-                role:
-                    "Student",
-
-                profileImage:
-                    "assets/Additional/Profile.png",
-
-                selectedIndex:
-                    0,
-
-                onItemTap:
-                    openScreen,
-              ),
-            ),
     );
   }
-}
+    }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../screens/auth/login_screen.dart';
 
 class CustomSidebar extends StatelessWidget {
   final String userName;
@@ -48,7 +50,7 @@ class CustomSidebar extends StatelessWidget {
               padding: const EdgeInsets.all(14),
 
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(.08),
+                color: Colors.white.withValues(alpha: .08),
                 borderRadius:
                     BorderRadius.circular(18),
               ),
@@ -167,7 +169,7 @@ class CustomSidebar extends StatelessWidget {
 
                 decoration: BoxDecoration(
                   color:
-                      Colors.white.withOpacity(.08),
+                      Colors.white.withValues(alpha: .08),
 
                   borderRadius:
                       BorderRadius.circular(18),
@@ -179,9 +181,15 @@ class CustomSidebar extends StatelessWidget {
                     CircleAvatar(
                       radius: 25,
                       backgroundImage:
-                          AssetImage(
-                        profileImage,
-                      ),
+                           profileImage.isNotEmpty
+
+          ? NetworkImage(
+              profileImage,
+            )
+
+          : const AssetImage(
+              "assets/Additional/Profile.png",
+            ) as ImageProvider,
                     ),
 
                     const SizedBox(width: 12),
@@ -251,12 +259,30 @@ class CustomSidebar extends StatelessWidget {
                 height: 50,
 
                 child: ElevatedButton.icon(
-                  onPressed: () {},
+  onPressed: () async {
 
-                  icon: const Icon(
-                    Icons.logout_rounded,
-                    color: Colors.white,
-                  ),
+    await FirebaseAuth.instance
+        .signOut();
+
+    if (context.mounted) {
+
+      Navigator.pushAndRemoveUntil(
+        context,
+
+        MaterialPageRoute(
+          builder: (_) =>
+              const LoginScreen(),
+        ),
+
+        (route) => false,
+      );
+    }
+  },
+
+  icon: const Icon(
+    Icons.logout_rounded,
+    color: Colors.white,
+  ),
 
                   label: Text(
                     "Logout",

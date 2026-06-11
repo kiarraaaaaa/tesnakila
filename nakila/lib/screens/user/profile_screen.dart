@@ -3,6 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -15,17 +18,52 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState
     extends State<ProfileScreen> {
 
+  String role = "";
+  String photoUrl = "";
   File? profileImage;
 
-  final nameController =
-      TextEditingController(
-    text: "Handy",
-  );
+Future<String?> uploadProfileImage() async {
 
-  final emailController =
-      TextEditingController(
-    text: "handy@gmail.com",
-  );
+  if (profileImage == null) {
+    return photoUrl;
+  }
+
+  try {
+
+    final uid =
+        FirebaseAuth
+            .instance
+            .currentUser!
+            .uid;
+
+    final ref =
+        FirebaseStorage.instance
+            .ref()
+            .child(
+              "profile_images/$uid.jpg",
+            );
+
+    await ref.putFile(
+      profileImage!,
+    );
+
+    return await ref.getDownloadURL();
+
+  } catch (e) {
+
+    debugPrint(
+      e.toString(),
+    );
+
+    return null;
+  }
+}
+
+  final nameController =
+    TextEditingController();
+
+final emailController =
+    TextEditingController();
 
   Future<void> pickImage() async {
 
@@ -45,7 +83,47 @@ class _ProfileScreenState
       });
     }
   }
+@override
+void initState() {
+  super.initState();
 
+  loadUserData();
+}
+
+Future<void> loadUserData() async {
+
+  final uid =
+      FirebaseAuth
+          .instance
+          .currentUser!
+          .uid;
+
+  final doc =
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(uid)
+          .get();
+
+  final data = doc.data();
+
+  if (data != null) {
+
+    setState(() {
+
+      nameController.text =
+          data["name"] ?? "";
+
+      emailController.text =
+          data["email"] ?? "";
+
+      role =
+          data["role"] ?? "user";
+
+      photoUrl =
+          data["photoUrl"] ?? "";
+    });
+  }
+}
   @override
   Widget build(BuildContext context) {
 
@@ -96,16 +174,22 @@ class _ProfileScreenState
                     backgroundColor:
                         Colors.white,
 
-                    backgroundImage:
-                        profileImage !=
-                                null
-                            ? FileImage(
-                                profileImage!,
-                              )
-                            : const AssetImage(
-                                "assets/Additional/Profile.png",
-                              )
-                                as ImageProvider,
+                   backgroundImage:
+    profileImage != null
+
+        ? FileImage(
+            profileImage!,
+          )
+
+        : photoUrl.isNotEmpty
+
+            ? NetworkImage(
+                photoUrl,
+              )
+
+            : const AssetImage(
+                "assets/Additional/Profile.png",
+              ) as ImageProvider,
                   ),
 
                   Positioned(
@@ -155,7 +239,7 @@ class _ProfileScreenState
               children: [
 
                 Text(
-                  "Handy",
+  nameController.text,
 
                   style:
                       GoogleFonts
@@ -183,7 +267,9 @@ class _ProfileScreenState
             ),
 
             Text(
-              "Student",
+              role == "admin"
+      ? "System Administrator"
+      : "Student",
 
               style:
                   GoogleFonts.poppins(
@@ -216,8 +302,8 @@ class _ProfileScreenState
                   BoxShadow(
                     color: Colors
                         .black
-                        .withOpacity(
-                      .05,
+                        .withValues(
+                      alpha: .05,
                     ),
                     blurRadius: 15,
                   ),
@@ -292,21 +378,47 @@ class _ProfileScreenState
 
                     child:
                         ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
 
-                        ScaffoldMessenger
-                                .of(
-                          context,
-                        )
-                            .showSnackBar(
-                          const SnackBar(
-                            content:
-                                Text(
-                              "Profile Updated",
-                            ),
-                          ),
-                        );
-                      },
+  final uid =
+      FirebaseAuth
+          .instance
+          .currentUser!
+          .uid;
+
+  final imageUrl =
+      await uploadProfileImage();
+
+  await FirebaseFirestore.instance
+      .collection("users")
+      .doc(uid)
+      .update({
+
+    "name":
+        nameController.text,
+
+    "photoUrl":
+        imageUrl ?? "",
+  });
+
+  if (!mounted) return;
+
+  ScaffoldMessenger.of(
+    context,
+  ).showSnackBar(
+
+    const SnackBar(
+      backgroundColor:
+          Colors.green,
+
+      content: Text(
+        "Profile Updated Successfully",
+      ),
+    ),
+  );
+
+  await loadUserData();
+},
 
                       style:
                           ElevatedButton
