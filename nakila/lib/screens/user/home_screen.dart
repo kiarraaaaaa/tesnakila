@@ -4,11 +4,13 @@ import '../../services/user_service.dart';
 import '../../models/campus_model.dart';
 import '../../widgets/campus_card.dart';
 import '../../widgets/custom_sidebar.dart';
-
+import 'package:geolocator/geolocator.dart';
 import 'about_screen.dart';
 import 'campus_detail_screen.dart';
 import 'favorite_screen.dart';
 import 'profile_screen.dart';
+import '../../services/favorite_service.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -25,6 +27,45 @@ class _HomeScreenState
       TextEditingController();
 
   late List<CampusModel> campuses;
+  String currentLocation =
+    "Location not detected";
+  
+  Future<void> getCurrentLocation() async {
+
+  try {
+
+    LocationPermission permission =
+        await Geolocator
+            .requestPermission();
+
+    if (permission ==
+            LocationPermission.denied ||
+        permission ==
+            LocationPermission
+                .deniedForever) {
+
+      return;
+    }
+
+    Position position =
+        await Geolocator
+            .getCurrentPosition();
+
+    setState(() {
+
+      currentLocation =
+          "${position.latitude.toStringAsFixed(4)}, "
+          "${position.longitude.toStringAsFixed(4)}";
+    });
+
+  } catch (e) {
+
+    debugPrint(
+      "LOCATION ERROR: $e",
+    );
+  }
+} 
+
 
   @override
   void initState() {
@@ -273,15 +314,16 @@ class _HomeScreenState
                             builder: (context) {
 
                               return IconButton(
-                                onPressed: () {
+  onPressed: () {
 
-                                  Scaffold.of(
-                                    context,
-                                  ).openDrawer();
-                                },
-                                icon: const Icon(
-                                  Icons.menu,
-                                ),
+    Scaffold.of(
+      context,
+    ).openDrawer();
+  },
+
+  icon: const Icon(
+    Icons.menu,
+  ),
                               );
                             },
                           ),
@@ -386,7 +428,12 @@ class _HomeScreenState
                                 Expanded(
                                   child:
                                       Text(
-                                    "Allow location access to discover universities around you.",
+                                    currentLocation ==
+        "Location not detected"
+
+    ? "Allow location access to discover universities around you."
+
+    : "Current Location: $currentLocation",
 
                                     style:
                                         GoogleFonts.poppins(),
@@ -394,14 +441,12 @@ class _HomeScreenState
                                 ),
 
                                 ElevatedButton(
-                                  onPressed:
-                                      () {},
+  onPressed: getCurrentLocation,
 
-                                  child:
-                                      const Text(
-                                    "Allow",
-                                  ),
-                                ),
+  child: const Text(
+    "Allow",
+  ),
+),
                               ],
                             ),
                           ),
@@ -495,8 +540,15 @@ class _HomeScreenState
                                         );
                                       },
 
-                                      onFavoriteTap:
-                                          () {},
+                                      onFavoriteTap: () async {
+
+  await FavoriteService()
+      .toggleFavorite(
+    campus.id,
+  );
+
+  setState(() {});
+},
                                     );
                                   },
                                 )

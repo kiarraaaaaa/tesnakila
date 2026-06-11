@@ -1,58 +1,63 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class FavoriteService {
 
   final FirebaseFirestore _firestore =
       FirebaseFirestore.instance;
 
-  Future<void> toggleFavorite({
-    required String uid,
-    required String campusId,
-  }) async {
+  final FirebaseAuth _auth =
+      FirebaseAuth.instance;
 
-    DocumentReference userRef =
-        _firestore
-            .collection("users")
-            .doc(uid);
+  Future<void> toggleFavorite(
+    String campusId,
+  ) async {
 
-    DocumentSnapshot snapshot =
-        await userRef.get();
+    final uid =
+        _auth.currentUser!.uid;
 
-    List favorites =
-        snapshot["favorites"] ?? [];
+    final query =
+        await _firestore
+            .collection("favorites")
+            .where(
+              "userId",
+              isEqualTo: uid,
+            )
+            .where(
+              "campusId",
+              isEqualTo: campusId,
+            )
+            .get();
 
-    if (favorites.contains(campusId)) {
+    if (query.docs.isNotEmpty) {
 
-      favorites.remove(campusId);
+      await query.docs.first.reference
+          .delete();
 
     } else {
 
-      favorites.add(campusId);
+      await _firestore
+          .collection("favorites")
+          .add({
 
+        "userId": uid,
+        "campusId": campusId,
+        "createdAt":
+            Timestamp.now(),
+      });
     }
-
-    await userRef.update({
-      "favorites": favorites,
-    });
   }
 
-  Stream<List<String>> getFavorites(
-    String uid,
-  ) {
+  Stream<QuerySnapshot>
+      getFavorites() {
 
     return _firestore
-        .collection("users")
-        .doc(uid)
-        .snapshots()
-        .map((snapshot) {
-
-      if (!snapshot.exists) {
-        return [];
-      }
-
-      return List<String>.from(
-        snapshot["favorites"] ?? [],
-      );
-    });
+        .collection("favorites")
+        .where(
+          "userId",
+          isEqualTo:
+              _auth.currentUser!.uid,
+        )
+        .snapshots();
   }
 }
