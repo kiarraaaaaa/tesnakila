@@ -1,11 +1,11 @@
-import 'dart:io';
+import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -20,44 +20,7 @@ class _ProfileScreenState
 
   String role = "";
   String photoUrl = "";
-  File? profileImage;
-
-Future<String?> uploadProfileImage() async {
-
-  if (profileImage == null) {
-    return photoUrl;
-  }
-
-  try {
-
-    final uid =
-        FirebaseAuth
-            .instance
-            .currentUser!
-            .uid;
-
-    final ref =
-        FirebaseStorage.instance
-            .ref()
-            .child(
-              "profile_images/$uid.jpg",
-            );
-
-    await ref.putFile(
-      profileImage!,
-    );
-
-    return await ref.getDownloadURL();
-
-  } catch (e) {
-
-    debugPrint(
-      e.toString(),
-    );
-
-    return null;
-  }
-}
+  Uint8List? imageBytes;
 
   final nameController =
     TextEditingController();
@@ -67,22 +30,21 @@ final emailController =
 
   Future<void> pickImage() async {
 
-    final picker = ImagePicker();
+  final image =
+      await ImagePicker().pickImage(
+    source: ImageSource.gallery,
+    imageQuality: 80,
+  );
 
-    final image =
-        await picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 80,
-    );
+  if (image != null) {
 
-    if (image != null) {
+    imageBytes =
+        await image.readAsBytes();
 
-      setState(() {
-        profileImage =
-            File(image.path);
-      });
-    }
+    setState(() {});
   }
+}
+
 @override
 void initState() {
   super.initState();
@@ -175,21 +137,22 @@ Future<void> loadUserData() async {
                         Colors.white,
 
                    backgroundImage:
-    profileImage != null
 
-        ? FileImage(
-            profileImage!,
+    imageBytes != null
+
+        ? MemoryImage(
+            imageBytes!,
           )
 
-        : photoUrl.isNotEmpty
-
-            ? NetworkImage(
-                photoUrl,
-              )
-
-            : const AssetImage(
-                "assets/Additional/Profile.png",
-              ) as ImageProvider,
+       : photoUrl.isNotEmpty
+    ? MemoryImage(
+        base64Decode(
+          photoUrl,
+        ),
+      )
+    : const AssetImage(
+        "assets/Additional/Profile.png",
+      ) as ImageProvider
                   ),
 
                   Positioned(
@@ -386,20 +349,26 @@ Future<void> loadUserData() async {
           .currentUser!
           .uid;
 
-  final imageUrl =
-      await uploadProfileImage();
+String photoBase64 = photoUrl;
 
-  await FirebaseFirestore.instance
-      .collection("users")
-      .doc(uid)
-      .update({
+if (imageBytes != null) {
+  photoBase64 =
+      base64Encode(
+        imageBytes!,
+      );
+}
 
-    "name":
-        nameController.text,
+await FirebaseFirestore.instance
+    .collection("users")
+    .doc(uid)
+    .update({
 
-    "photoUrl":
-        imageUrl ?? "",
-  });
+  "name":
+      nameController.text,
+
+  "photoUrl":
+      photoBase64,
+});
 
   if (!mounted) return;
 

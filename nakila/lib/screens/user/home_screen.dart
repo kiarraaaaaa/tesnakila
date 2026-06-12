@@ -30,6 +30,49 @@ class _HomeScreenState
   String currentLocation =
     "Location not detected";
   
+  Future<void> loadFavorites() async {
+
+  final favorites =
+      await FavoriteService()
+          .getFavorites()
+          .first;
+
+  final favoriteIds =
+      favorites.docs
+          .map(
+            (e) => e["campusId"] as String,
+          )
+          .toList();
+
+  setState(() {
+
+    campuses =
+        campuses.map((campus) {
+
+      return CampusModel(
+        id: campus.id,
+        name: campus.name,
+        image: campus.image,
+        location: campus.location,
+        country: campus.country,
+        rating: campus.rating,
+        verified: campus.verified,
+        description: campus.description,
+        history: campus.history,
+        foundedYear: campus.foundedYear,
+        worldRanking: campus.worldRanking,
+        achievements: campus.achievements,
+        programs: campus.programs,
+
+        isFavorite:
+            favoriteIds.contains(
+          campus.id,
+        ),
+      );
+    }).toList();
+  });
+}
+
   Future<void> getCurrentLocation() async {
 
   try {
@@ -208,6 +251,7 @@ class _HomeScreenState
         ],
       ),
     ];
+    loadFavorites();
   }
 
   void openScreen(int index) {

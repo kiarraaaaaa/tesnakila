@@ -15,7 +15,7 @@ class AdminProfileScreen extends StatefulWidget {
 class _AdminProfileScreenState
     extends State<AdminProfileScreen> {
 
-  File? profileImage;
+  Uint8List? imageBytes;
 
   final nameController =
       TextEditingController(
@@ -27,7 +27,22 @@ class _AdminProfileScreenState
     text: "admin@nakila.com",
   );
 
-  Future<void> pickImage() async {
+  Future<void> Future<void> pickImage() async {
+
+  final image =
+      await ImagePicker().pickImage(
+    source: ImageSource.gallery,
+    imageQuality: 80,
+  );
+
+  if (image != null) {
+
+    imageBytes =
+        await image.readAsBytes();
+
+    setState(() {});
+  }
+} async {
 
     final image =
         await ImagePicker().pickImage(

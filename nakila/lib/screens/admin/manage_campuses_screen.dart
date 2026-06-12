@@ -43,7 +43,22 @@ class _ManageCampusesScreenState
 
   File? imageFile;
 
-  Future<void> pickImage() async {
+  Future<void> Future<void> pickImage() async {
+
+  final image =
+      await ImagePicker().pickImage(
+    source: ImageSource.gallery,
+    imageQuality: 80,
+  );
+
+  if (image != null) {
+
+    imageBytes =
+        await image.readAsBytes();
+
+    setState(() {});
+  }
+} async {
 
     final image =
         await ImagePicker()

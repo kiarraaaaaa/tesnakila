@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../screens/auth/login_screen.dart';
+import 'dart:convert';
 
 class CustomSidebar extends StatelessWidget {
   final String userName;
@@ -179,18 +180,21 @@ class CustomSidebar extends StatelessWidget {
                   children: [
 
                     CircleAvatar(
-                      radius: 25,
-                      backgroundImage:
-                           profileImage.isNotEmpty
+  radius: 25,
 
-          ? NetworkImage(
-              profileImage,
+  backgroundImage:
+      profileImage.isNotEmpty
+
+          ? MemoryImage(
+              base64Decode(
+                profileImage,
+              ),
             )
 
           : const AssetImage(
               "assets/Additional/Profile.png",
             ) as ImageProvider,
-                    ),
+),
 
                     const SizedBox(width: 12),
 

@@ -354,22 +354,24 @@ class CampusDetailScreen extends StatelessWidget {
                   children: [
 
                     CircleAvatar(
-                      backgroundImage:
-                          review.userImage
-                                  .isNotEmpty
-                              ? NetworkImage(
-                                  review.userImage,
-                                )
-                              : null,
+  radius: 22,
 
-                      child:
-                          review.userImage
-                                  .isEmpty
-                              ? const Icon(
-                                  Icons.person,
-                                )
-                              : null,
-                    ),
+  backgroundImage:
+      review.userImage.isNotEmpty
+          ? MemoryImage(
+              base64Decode(
+                review.userImage,
+              ),
+            )
+          : null,
+
+  child:
+      review.userImage.isEmpty
+          ? const Icon(
+              Icons.person,
+            )
+          : null,
+),
 
                     const SizedBox(
                       width: 10,
@@ -456,8 +458,8 @@ class CampusDetailScreen extends StatelessWidget {
         base64Decode(
           review.reviewImage,
         ),
-        height: 200,
-        width: double.infinity,
+        height: 150,
+        width: 100,
         fit: BoxFit.cover,
       ),
     ),
