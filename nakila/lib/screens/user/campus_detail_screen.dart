@@ -4,6 +4,7 @@ import '../../services/review_service.dart';
 import '../../models/review_model.dart';
 import 'add_review_screen.dart';
 import '../../models/campus_model.dart';
+import 'dart:convert';
 class CampusDetailScreen extends StatelessWidget {
   final CampusModel campus;
 
@@ -274,6 +275,12 @@ class CampusDetailScreen extends StatelessWidget {
     context,
     snapshot,
   ) {
+    if (snapshot.hasError) {
+
+  return Text(
+    snapshot.error.toString(),
+  );
+}
 
     if (!snapshot.hasData) {
 
@@ -431,30 +438,30 @@ class CampusDetailScreen extends StatelessWidget {
                   review.reviewText,
                 ),
 
-                if (review
-                    .reviewImage
-                    .isNotEmpty)
+                if (review.reviewImage.isNotEmpty)
 
-                  Padding(
-                    padding:
-                        const EdgeInsets
-                            .only(
-                      top: 10,
-                    ),
+  Padding(
+    padding:
+        const EdgeInsets.only(
+      top: 10,
+    ),
 
-                    child: ClipRRect(
-                      borderRadius:
-                          BorderRadius
-                              .circular(
-                        12,
-                      ),
+    child: ClipRRect(
+      borderRadius:
+          BorderRadius.circular(
+        12,
+      ),
 
-                      child: Image.network(
-                        review
-                            .reviewImage,
-                      ),
-                    ),
-                  ),
+      child: Image.memory(
+        base64Decode(
+          review.reviewImage,
+        ),
+        height: 200,
+        width: double.infinity,
+        fit: BoxFit.cover,
+      ),
+    ),
+  ),
               ],
             ),
           );

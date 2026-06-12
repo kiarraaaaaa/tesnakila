@@ -57,10 +57,6 @@ class ReviewService {
   "campusId",
   isEqualTo: campusId,
 )
-.orderBy(
-  "createdAt",
-  descending: true,
-)
 .snapshots()
         .map((snapshot) {
 
