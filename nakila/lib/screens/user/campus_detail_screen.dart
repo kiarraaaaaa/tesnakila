@@ -440,27 +440,52 @@ class CampusDetailScreen extends StatelessWidget {
                   review.reviewText,
                 ),
 
-                if (review.reviewImage.isNotEmpty)
+                if (review.reviewImages.isNotEmpty)
 
   Padding(
-    padding:
-        const EdgeInsets.only(
+    padding: const EdgeInsets.only(
       top: 10,
     ),
 
-    child: ClipRRect(
-      borderRadius:
-          BorderRadius.circular(
-        12,
-      ),
+    child: SizedBox(
+      height: 120,
 
-      child: Image.memory(
-        base64Decode(
-          review.reviewImage,
-        ),
-        height: 150,
-        width: 100,
-        fit: BoxFit.cover,
+      child: ListView.builder(
+        scrollDirection:
+            Axis.horizontal,
+
+        itemCount:
+            review.reviewImages.length,
+
+        itemBuilder:
+            (context, index) {
+
+          return Container(
+            margin:
+                const EdgeInsets.only(
+              right: 8,
+            ),
+
+            child: ClipRRect(
+              borderRadius:
+                  BorderRadius.circular(
+                12,
+              ),
+
+              child: Image.memory(
+                base64Decode(
+                  review.reviewImages[
+                      index],
+                ),
+
+                width: 120,
+                height: 120,
+
+                fit: BoxFit.cover,
+              ),
+            ),
+          );
+        },
       ),
     ),
   ),

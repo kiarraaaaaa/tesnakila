@@ -70,10 +70,15 @@ class CustomSidebar extends StatelessWidget {
                       color: Colors.white,
                     ),
 
-                    child: const Icon(
-                      Icons.school,
-                      color: Color(0xff2563EB),
-                    ),
+                    child: ClipRRect(
+  borderRadius:
+      BorderRadius.circular(15),
+
+  child: Image.asset(
+    "assets/Additional/Polosan.png",
+    fit: BoxFit.cover,
+  ),
+),
                   ),
 
                   const SizedBox(width: 12),
@@ -204,35 +209,30 @@ class CustomSidebar extends StatelessWidget {
                             CrossAxisAlignment.start,
                         children: [
 
-                          Row(
-                            children: [
+                         Row(
+  mainAxisSize: MainAxisSize.min,
+  children: [
 
-                              Expanded(
-                                child: Text(
-                                  userName,
-                                  overflow:
-                                      TextOverflow
-                                          .ellipsis,
-                                  style:
-                                      GoogleFonts
-                                          .poppins(
-                                    color:
-                                        Colors.white,
-                                    fontWeight:
-                                        FontWeight
-                                            .w600,
-                                  ),
-                                ),
-                              ),
+    Flexible(
+      child: Text(
+        userName,
+        overflow: TextOverflow.ellipsis,
+        style: GoogleFonts.poppins(
+          color: Colors.white,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    ),
 
-                              const Icon(
-                                Icons.verified,
-                                color:
-                                    Colors.blue,
-                                size: 16,
-                              ),
-                            ],
-                          ),
+    const SizedBox(width: 4),
+
+    const Icon(
+      Icons.verified,
+      color: Colors.blue,
+      size: 16,
+    ),
+  ],
+),
 
                           Text(
                             role,

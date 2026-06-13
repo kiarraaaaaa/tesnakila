@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'dart:convert';
 import '../models/review_model.dart';
 
 class ReviewCard extends StatelessWidget {
@@ -32,8 +32,8 @@ class ReviewCard extends StatelessWidget {
 
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(
-              .05,
+            color: Colors.black.withValues(
+              alpha: .05,
             ),
             blurRadius: 12,
             offset: const Offset(
@@ -58,11 +58,13 @@ class ReviewCard extends StatelessWidget {
                 radius: 25,
 
                 backgroundImage:
-                    review.userImage.isNotEmpty
-                        ? NetworkImage(
-                            review.userImage,
-                          )
-                        : null,
+    review.userImage.isNotEmpty
+        ? MemoryImage(
+            base64Decode(
+              review.userImage,
+            ),
+          )
+        : null,
 
                 child:
                     review.userImage.isEmpty
@@ -202,59 +204,59 @@ class ReviewCard extends StatelessWidget {
           ),
 
           /// REVIEW IMAGE
-          if (review.reviewImage
-              .isNotEmpty)
-            Padding(
-              padding:
-                  const EdgeInsets.only(
-                top: 15,
+         if (review.reviewImages.isNotEmpty)
+
+  Padding(
+    padding: const EdgeInsets.only(
+      top: 15,
+    ),
+
+    child: SizedBox(
+      height: 120,
+
+      child: ListView.builder(
+        scrollDirection:
+            Axis.horizontal,
+
+        itemCount:
+            review.reviewImages.length,
+
+        itemBuilder:
+            (context, index) {
+
+          return Container(
+            margin:
+                const EdgeInsets.only(
+              right: 10,
+            ),
+
+            child: ClipRRect(
+              borderRadius:
+                  BorderRadius.circular(
+                12,
               ),
 
-              child: ClipRRect(
-                borderRadius:
-                    BorderRadius.circular(
-                  15,
+              child: Image.memory(
+                base64Decode(
+                  review.reviewImages[
+                      index],
                 ),
 
-                child: Image.network(
-                  review.reviewImage,
+                width: 120,
+                height: 120,
 
-                  width:
-                      double.infinity,
-
-                  height: 200,
-
-                  fit: BoxFit.cover,
-
-                  errorBuilder:
-                      (
-                    context,
-                    error,
-                    stackTrace,
-                  ) {
-                    return Container(
-                      height: 200,
-
-                      decoration:
-                          BoxDecoration(
-                        color: Colors
-                            .grey
-                            .shade200,
-                      ),
-
-                      child: const Center(
-                        child: Icon(
-                          Icons.image,
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                fit: BoxFit.cover,
               ),
             ),
+          );
+        },
+      ),
+    ),
+  ),
         ],
       ),
     );
+  }
   }
 
   String _formatDate(
@@ -263,4 +265,3 @@ class ReviewCard extends StatelessWidget {
     return
         "${date.day}/${date.month}/${date.year}";
   }
-}

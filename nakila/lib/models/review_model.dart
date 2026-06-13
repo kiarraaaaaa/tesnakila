@@ -10,7 +10,7 @@ class ReviewModel {
 
   final String reviewText;
 
-  final String reviewImage;
+  final List<String> reviewImages;
 
   final double rating;
 
@@ -23,7 +23,7 @@ class ReviewModel {
     required this.userName,
     required this.userImage,
     required this.reviewText,
-    required this.reviewImage,
+    required this.reviewImages,
     required this.rating,
     required this.createdAt,
 this.replies = const [],
@@ -50,8 +50,10 @@ this.replies = const [],
       reviewText:
           map["reviewText"] ?? "",
 
-      reviewImage:
-          map["reviewImage"] ?? "",
+      reviewImages:
+    List<String>.from(
+      map["reviewImages"] ?? [],
+    ),
 
       rating:
           (map["rating"] ?? 0)
@@ -79,7 +81,7 @@ this.replies = const [],
       "userName": userName,
       "userImage": userImage,
       "reviewText": reviewText,
-      "reviewImage": reviewImage,
+      "reviewImages": reviewImages,
       "rating": rating,
       "createdAt":
           createdAt.toIso8601String(),

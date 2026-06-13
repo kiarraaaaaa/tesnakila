@@ -34,27 +34,30 @@ class _AddReviewScreenState
 
   double rating = 5;
 
- Uint8List? imageBytes;
-XFile? selectedImage;
+ List<Uint8List> imageList = [];
+List<XFile> selectedImages = [];
 
   bool isLoading = false;
 
-  Future<void> pickImage() async {
+  Future<void> pickImages() async {
 
-  final image =
-      await ImagePicker().pickImage(
-    source: ImageSource.gallery,
-  );
+  final images =
+      await ImagePicker().pickMultiImage();
 
-  if (image != null) {
+  if (images.isNotEmpty) {
 
-    imageBytes =
-        await image.readAsBytes();
+    selectedImages = images;
 
-    setState(() {
+    imageList.clear();
 
-      selectedImage = image;
-    });
+    for (var image in images) {
+
+      imageList.add(
+        await image.readAsBytes(),
+      );
+    }
+
+    setState(() {});
   }
 }
 
@@ -90,13 +93,12 @@ XFile? selectedImage;
       final user =
           userDoc.data()!;
 
-      String imageBase64 = "";
+     List<String> reviewImages = [];
 
-if (imageBytes != null) {
+for (var image in imageList) {
 
-  imageBase64 =
-      base64Encode(
-    imageBytes!,
+  reviewImages.add(
+    base64Encode(image),
   );
 }
 
@@ -125,8 +127,8 @@ if (imageBytes != null) {
         reviewText:
             reviewController.text,
 
-        reviewImage:
-            imageBase64,
+        reviewImages:
+            reviewImages,
 
         rating: rating,
 
@@ -266,28 +268,46 @@ if (imageBytes != null) {
               height: 20,
             ),
 
-            if (selectedImage !=
-                null)
+           if (imageList.isNotEmpty)
 
-              ClipRRect(
-                borderRadius:
-                    BorderRadius.circular(
-                  16,
-                ),
-              ),
-                if (imageBytes != null)
+SizedBox(
+  height: 120,
 
-  ClipRRect(
-    borderRadius:
-        BorderRadius.circular(12),
+  child: ListView.builder(
+    scrollDirection:
+        Axis.horizontal,
 
-    child: Image.memory(
-      imageBytes!,
-      height: 140,
-      width: 50,
-      fit: BoxFit.cover,
-    ),
+    itemCount:
+        imageList.length,
+
+    itemBuilder:
+        (context, index) {
+
+      return Container(
+        margin:
+            const EdgeInsets.only(
+          right: 10,
+        ),
+
+        child: ClipRRect(
+          borderRadius:
+              BorderRadius.circular(
+            12,
+          ),
+
+          child: Image.memory(
+            imageList[index],
+
+            width: 120,
+            height: 120,
+
+            fit: BoxFit.cover,
+          ),
+        ),
+      );
+    },
   ),
+),
 
             const SizedBox(
               height: 20,
@@ -295,7 +315,7 @@ if (imageBytes != null) {
 
             OutlinedButton.icon(
               onPressed:
-                  pickImage,
+                  pickImages,
 
               icon: const Icon(
                 Icons.photo,
