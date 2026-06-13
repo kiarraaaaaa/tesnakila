@@ -254,7 +254,7 @@ Row(
         },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(12),
 
           decoration: BoxDecoration(
             color: selectedRole == "user"
@@ -310,7 +310,7 @@ Row(
         },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(12),
 
           decoration: BoxDecoration(
             color: selectedRole == "admin"

@@ -128,7 +128,6 @@ class CustomSidebar extends StatelessWidget {
                 ],
               ),
             ),
-
             const SizedBox(height: 30),
 
             Expanded(
@@ -168,7 +167,7 @@ class CustomSidebar extends StatelessWidget {
             ),
 
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(12),
               child: Container(
                 padding:
                     const EdgeInsets.all(12),

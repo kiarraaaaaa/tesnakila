@@ -22,7 +22,8 @@ class CampusDetailScreen extends StatelessWidget {
         slivers: [
 
           SliverAppBar(
-            expandedHeight: 320,
+            expandedHeight: 220,
+            
             pinned: true,
 
             backgroundColor:
@@ -34,49 +35,117 @@ class CampusDetailScreen extends StatelessWidget {
                 tag: campus.id,
 
                 child: Image.asset(
-                  campus.image,
-                  fit: BoxFit.cover,
-                ),
+  campus.image,
+  fit: BoxFit.cover,
+),
               ),
             ),
           ),
 
           SliverToBoxAdapter(
             child: Padding(
-              padding:
-                  const EdgeInsets.all(20),
+  padding: const EdgeInsets.all(20),
 
-              child: Column(
+    child: Padding(
+      padding: const EdgeInsets.all(20),
+
+      child: Column(
                 crossAxisAlignment:
                     CrossAxisAlignment.start,
 
                 children: [
 
                   Row(
-                    children: [
+  children: [
 
-                      Expanded(
-                        child: Text(
-                          campus.name,
+    Text(
+      campus.name,
+      style: GoogleFonts.poppins(
+        fontSize: 28,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
 
-                          style:
-                              GoogleFonts
-                                  .poppins(
-                            fontSize: 28,
-                            fontWeight:
-                                FontWeight
-                                    .bold,
-                          ),
-                        ),
-                      ),
+    const SizedBox(width: 8),
 
-                      if (campus.verified)
-                        const Icon(
-                          Icons.verified,
-                          color: Colors.blue,
-                        ),
-                    ],
-                  ),
+    const Icon(
+      Icons.verified,
+      color: Colors.blue,
+      size: 20,
+    ),
+  ],
+),
+Row(
+  children: [
+
+    const Icon(
+      Icons.location_on,
+      size: 18,
+      color: Colors.grey,
+    ),
+
+    const SizedBox(width: 5),
+
+    Text(
+      "${campus.location}, ${campus.country}",
+    ),
+  ],
+),
+const SizedBox(height: 8),
+
+Row(
+  children: [
+
+    const Icon(
+      Icons.school,
+      size: 18,
+      color: Colors.blue,
+    ),
+
+    const SizedBox(width: 5),
+
+    Text(
+      "Top Ranked University",
+    ),
+  ],
+),
+const SizedBox(height: 15),
+
+Wrap(
+  spacing: 10,
+  children: [
+
+    Chip(
+      avatar: Icon(
+        Icons.public,
+        size: 16,
+      ),
+      label: Text(
+        campus.country,
+      ),
+    ),
+
+    Chip(
+      avatar: Icon(
+        Icons.school,
+        size: 16,
+      ),
+      label: Text(
+        campus.foundedYear,
+      ),
+    ),
+
+    Chip(
+      avatar: Icon(
+        Icons.workspace_premium,
+        size: 16,
+      ),
+      label: Text(
+        "Verified",
+      ),
+    ),
+  ],
+),
 
                   const SizedBox(height: 12),
 
@@ -101,10 +170,10 @@ class CampusDetailScreen extends StatelessWidget {
                   const SizedBox(height: 20),
 
                   Container(
-                    padding:
-                        const EdgeInsets.all(
-                      16,
-                    ),
+                    padding: EdgeInsets.symmetric(
+  vertical: 12,
+  horizontal: 16,
+),
 
                     decoration:
                         BoxDecoration(
@@ -147,20 +216,26 @@ class CampusDetailScreen extends StatelessWidget {
                         GoogleFonts.poppins(
                       fontWeight:
                           FontWeight.bold,
-                      fontSize: 20,
+                      fontSize: 18,
                     ),
                   ),
 
-                  const SizedBox(height: 10),
 
-                  Text(
-                    campus.description,
+                 const SizedBox(height: 10),
 
-                    style:
-                        GoogleFonts.poppins(
-                      height: 1.7,
-                    ),
-                  ),
+
+SizedBox(
+  width: double.infinity,
+
+  child: Text(
+    campus.description,
+
+    style:
+        GoogleFonts.poppins(
+      height: 1.7,
+    ),
+  ),
+),
 
                   const SizedBox(height: 25),
 
@@ -175,16 +250,15 @@ class CampusDetailScreen extends StatelessWidget {
                     ),
                   ),
 
-                  const SizedBox(height: 10),
-
-                  Text(
-                    campus.history,
-
-                    style:
-                        GoogleFonts.poppins(
-                      height: 1.7,
-                    ),
-                  ),
+                  SizedBox(
+  width: double.infinity,
+  child: Text(
+    campus.history,
+    style: GoogleFonts.poppins(
+      height: 1.7,
+    ),
+  ),
+),
 
                   const SizedBox(height: 25),
 
@@ -202,20 +276,34 @@ class CampusDetailScreen extends StatelessWidget {
                   const SizedBox(height: 15),
 
                   ...campus.achievements
-                      .map(
-                        (achievement) =>
-                            ListTile(
-                          leading:
-                              const Icon(
-                            Icons.emoji_events,
-                            color:
-                                Colors.amber,
-                          ),
-                          title: Text(
-                            achievement,
-                          ),
-                        ),
-                      ),
+    .map(
+      (achievement) => Padding(
+        padding:
+            const EdgeInsets.symmetric(
+          vertical: 4,
+        ),
+
+        child: Row(
+          children: [
+
+            const Icon(
+              Icons.emoji_events,
+              color: Colors.amber,
+              size: 18,
+            ),
+
+            const SizedBox(width: 8),
+
+            Expanded(
+              child: Text(
+                achievement,
+              ),
+            ),
+          ],
+        ),
+      ),
+    )
+    .toList(),
 
                   const SizedBox(height: 25),
 
@@ -301,14 +389,18 @@ class CampusDetailScreen extends StatelessWidget {
           20,
         ),
 
-        decoration:
-            BoxDecoration(
-          color: Colors.white,
-          borderRadius:
-              BorderRadius.circular(
-            20,
-          ),
-        ),
+        decoration: BoxDecoration(
+  color: Colors.white,
+  borderRadius: BorderRadius.circular(20),
+
+  boxShadow: [
+    BoxShadow(
+      color: Colors.black12,
+      blurRadius: 8,
+      offset: Offset(0, 2),
+    ),
+  ],
+),
 
         child: const Center(
           child: Text(
@@ -323,26 +415,35 @@ class CampusDetailScreen extends StatelessWidget {
           reviews.map(
         (review) {
 
-          return Container(
-            margin:
-                const EdgeInsets.only(
-              bottom: 15,
-            ),
+         return Align(
+  alignment: Alignment.centerLeft,
 
-            padding:
-                const EdgeInsets.all(
-              16,
-            ),
+  child: SizedBox(
 
-            decoration:
-                BoxDecoration(
-              color: Colors.white,
-              borderRadius:
-                  BorderRadius.circular(
-                20,
-              ),
-            ),
+    child: Container(
+      margin:
+          const EdgeInsets.only(
+        bottom: 15,
+      ),
 
+      padding:
+          const EdgeInsets.all(
+        16,
+      ),
+
+      decoration: BoxDecoration(
+  color: Colors.white,
+  borderRadius: BorderRadius.circular(20),
+
+  boxShadow: [
+    BoxShadow(
+      color: Colors.black12,
+      blurRadius: 8,
+      offset: Offset(0, 2),
+    ),
+  ],
+),
+    
             child: Column(
               crossAxisAlignment:
                   CrossAxisAlignment
@@ -357,13 +458,13 @@ class CampusDetailScreen extends StatelessWidget {
   radius: 22,
 
   backgroundImage:
-      review.userImage.isNotEmpty
-          ? MemoryImage(
-              base64Decode(
-                review.userImage,
-              ),
-            )
-          : null,
+    review.userImage.isNotEmpty
+        ? MemoryImage(
+            base64Decode(
+              review.userImage,
+            ),
+          )
+        : null,
 
   child:
       review.userImage.isEmpty
@@ -397,16 +498,14 @@ class CampusDetailScreen extends StatelessWidget {
                           ),
 
                           Text(
-                            review.createdAt
-                                .toString(),
-                            style:
-                                GoogleFonts
-                                    .poppins(
-                              fontSize: 12,
-                              color:
-                                  Colors.grey,
-                            ),
-                          ),
+  "${review.createdAt.day}/${review.createdAt.month}/${review.createdAt.year}",
+
+  style:
+      GoogleFonts.poppins(
+    fontSize: 12,
+    color: Colors.grey,
+  ),
+),
                         ],
                       ),
                     ),
@@ -448,8 +547,8 @@ class CampusDetailScreen extends StatelessWidget {
     ),
 
     child: SizedBox(
-      height: 120,
-
+      height: 80,
+      width: 80,
       child: ListView.builder(
         scrollDirection:
             Axis.horizontal,
@@ -478,8 +577,8 @@ class CampusDetailScreen extends StatelessWidget {
                       index],
                 ),
 
-                width: 120,
-                height: 120,
+                width: 90,
+                height: 90,
 
                 fit: BoxFit.cover,
               ),
@@ -491,6 +590,8 @@ class CampusDetailScreen extends StatelessWidget {
   ),
               ],
             ),
+    ),
+  ),
           );
         },
       ).toList(),
@@ -500,10 +601,10 @@ class CampusDetailScreen extends StatelessWidget {
 
                   const SizedBox(height: 30),
 
-                  SizedBox(
-                    width:
-                        double.infinity,
-                    height: 55,
+                  Center(
+  child: SizedBox(
+    width: 250,
+    height: 50,
 
                     child:
                         ElevatedButton.icon(
@@ -531,11 +632,12 @@ class CampusDetailScreen extends StatelessWidget {
                     ),
                   ),
 
-                  const SizedBox(height: 40),
-                ],
-              ),
+                  ),
+                ]
             ),
           ),
+      ),
+    ),
         ],
       ),
     );
@@ -553,7 +655,7 @@ class CampusDetailScreen extends StatelessWidget {
           style: const TextStyle(
             fontWeight:
                 FontWeight.bold,
-            fontSize: 18,
+            fontSize: 15,
           ),
         ),
 

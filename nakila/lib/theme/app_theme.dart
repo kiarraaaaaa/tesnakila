@@ -1,16 +1,31 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  static const Color primaryBlue = Color(0xFF2563EB);
-  static const Color secondaryBlue = Color(0xFF60A5FA);
-  static const Color darkBlue = Color(0xFF1E3A8A);
 
-  static LinearGradient primaryGradient = const LinearGradient(
-    colors: [
-      Color(0xFF2563EB),
-      Color(0xFF60A5FA),
-    ],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
+  static ThemeData lightTheme =
+      ThemeData(
+    brightness: Brightness.light,
+
+    scaffoldBackgroundColor:
+        const Color(0xffF8FAFC),
+
+    primaryColor:
+        const Color(0xff2563EB),
+
+    cardColor: Colors.white,
+  );
+
+  static ThemeData darkTheme =
+      ThemeData(
+    brightness: Brightness.dark,
+
+    scaffoldBackgroundColor:
+        const Color(0xff0F172A),
+
+    primaryColor:
+        const Color(0xff3B82F6),
+
+    cardColor:
+        const Color(0xff1E293B),
   );
 }
