@@ -46,9 +46,6 @@ class CampusDetailScreen extends StatelessWidget {
             child: Padding(
   padding: const EdgeInsets.all(20),
 
-    child: Padding(
-      padding: const EdgeInsets.all(20),
-
       child: Column(
                 crossAxisAlignment:
                     CrossAxisAlignment.start,
@@ -297,7 +294,7 @@ SizedBox(
             Expanded(
               child: Text(
                 achievement,
-              ),
+               ),
             ),
           ],
         ),
@@ -415,7 +412,7 @@ SizedBox(
           reviews.map(
         (review) {
 
-         return Align(
+         return Container(
   alignment: Alignment.centerLeft,
 
   child: SizedBox(
@@ -547,8 +544,7 @@ SizedBox(
     ),
 
     child: SizedBox(
-      height: 80,
-      width: 80,
+      height: 90,
       child: ListView.builder(
         scrollDirection:
             Axis.horizontal,
@@ -592,6 +588,7 @@ SizedBox(
             ),
     ),
   ),
+  
           );
         },
       ).toList(),
@@ -636,8 +633,7 @@ SizedBox(
                 ]
             ),
           ),
-      ),
-    ),
+          ),
         ],
       ),
     );
