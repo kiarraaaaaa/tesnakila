@@ -205,18 +205,24 @@ class _ManageUsersScreenState
                           CircleAvatar(
                             radius:
                                 28,
+backgroundImage:
+      (data["photoUrl"] ?? "")
+              .toString()
+              .isNotEmpty
+          ? NetworkImage(
+              data["photoUrl"],
+            )
+          : null,
 
-                            backgroundColor:
-                                Colors
-                                    .blue
-                                    .shade100,
-
-                            child:
-                                const Icon(
-                              Icons
-                                  .person,
-                            ),
-                          ),
+  child:
+      (data["photoUrl"] ?? "")
+              .toString()
+              .isEmpty
+          ? const Icon(
+              Icons.person,
+            )
+          : null,
+),
 
                           const SizedBox(
                             width:
@@ -252,14 +258,12 @@ class _ManageUsersScreenState
                                       ),
                                     ),
 
-                                    const Icon(
-                                      Icons
-                                          .verified,
-                                      color:
-                                          Colors.blue,
-                                      size:
-                                          18,
-                                    ),
+                                    if (data["verified"] == true)
+  const Icon(
+    Icons.verified,
+    color: Colors.blue,
+    size: 18,
+  ),
                                   ],
                                 ),
 
@@ -312,9 +316,11 @@ class _ManageUsersScreenState
                                         "user",
 
                                     style:
-                                        GoogleFonts.poppins(
-                                      color:
-                                          Colors.green,
+    GoogleFonts.poppins(
+  color:
+      data["role"] == "admin"
+          ? Colors.red
+          : Colors.green,
                                       fontSize:
                                           12,
                                       fontWeight:
@@ -327,41 +333,61 @@ class _ManageUsersScreenState
                           ),
 
                           PopupMenuButton(
-                            itemBuilder:
-                                (context) =>
-                                    [
+  itemBuilder:
+      (context) => [
 
-                              const PopupMenuItem(
-                                value:
-                                    "delete",
+    const PopupMenuItem(
+      value: "role",
+      child: Text(
+        "Toggle Admin",
+      ),
+    ),
 
-                                child:
-                                    Text(
-                                  "Delete User",
-                                ),
-                              ),
-                            ],
-
+    const PopupMenuItem(
+      value: "delete",
+      child: Text(
+        "Delete User",
+      ),
+    ),
+  ],
                             onSelected:
-                                (
-                              value,
-                            ) async {
+    (value) async {
 
-                              if (value ==
-                                  "delete") {
+  if (value == "role") {
 
-                                await FirebaseFirestore
-                                    .instance
-                                    .collection(
-                                      "users",
-                                    )
-                                    .doc(
-                                      users[index]
-                                          .id,
-                                    )
-                                    .delete();
-                              }
-                            },
+    final currentRole =
+        data["role"] ?? "user";
+
+    await FirebaseFirestore
+        .instance
+        .collection(
+          "users",
+        )
+        .doc(
+          users[index].id,
+        )
+        .update({
+
+      "role":
+          currentRole == "admin"
+              ? "user"
+              : "admin",
+    });
+  }
+
+  if (value == "delete") {
+
+    await FirebaseFirestore
+        .instance
+        .collection(
+          "users",
+        )
+        .doc(
+          users[index].id,
+        )
+        .delete();
+  }
+},
                           ),
                         ],
                       ),

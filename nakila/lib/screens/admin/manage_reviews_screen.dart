@@ -1,8 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../models/review_model.dart';
+import '../../services/review_service.dart';
+
 class ManageReviewsScreen
     extends StatefulWidget {
+
   const ManageReviewsScreen({
     super.key,
   });
@@ -17,50 +23,7 @@ class _ManageReviewsScreenState
     extends State<
         ManageReviewsScreen> {
 
-  final List<Map<String, dynamic>>
-      reviews = [
-
-    {
-      "name": "Handy",
-      "campus":
-          "Harvard University",
-      "rating": 5.0,
-      "review":
-          "Amazing campus with outstanding facilities and academic excellence.",
-      "image":
-          "assets/Additional/Harvard.jpg",
-    },
-
-    {
-      "name": "Bella",
-      "campus":
-          "Oxford University",
-      "rating": 4.8,
-      "review":
-          "Beautiful environment and top-quality education.",
-      "image":
-          "assets/Additional/Oxford.jpg",
-    },
-  ];
-
-  void deleteReview(
-    int index,
-  ) {
-
-    setState(() {
-      reviews.removeAt(index);
-    });
-
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(
-      const SnackBar(
-        content: Text(
-          "Review Deleted",
-        ),
-      ),
-    );
-  }
+  String searchText = "";
 
   @override
   Widget build(
@@ -79,268 +42,363 @@ class _ManageReviewsScreenState
         ),
       ),
 
-      body: reviews.isEmpty
+      body: Column(
+        children: [
 
-          ? Center(
-              child: Text(
-                "No Reviews Found",
+          Padding(
+            padding:
+                const EdgeInsets.all(
+              20,
+            ),
 
-                style:
-                    GoogleFonts
-                        .poppins(
-                  fontSize: 18,
-                  fontWeight:
-                      FontWeight
-                          .bold,
+            child: TextField(
+              onChanged:
+                  (value) {
+
+                setState(() {
+
+                  searchText =
+                      value
+                          .toLowerCase();
+                });
+              },
+
+              decoration:
+                  InputDecoration(
+                hintText:
+                    "Search Review",
+
+                prefixIcon:
+                    const Icon(
+                  Icons.search,
+                ),
+
+                filled: true,
+
+                fillColor:
+                    Colors.white,
+
+                border:
+                    OutlineInputBorder(
+                  borderRadius:
+                      BorderRadius.circular(
+                    15,
+                  ),
                 ),
               ),
-            )
+            ),
+          ),
 
-          : ListView.builder(
-              padding:
-                  const EdgeInsets
-                      .all(
-                20,
-              ),
+          Expanded(
+            child:
+                StreamBuilder<
+                    List<ReviewModel>>(
+              stream:
+                  ReviewService()
+                      .getAllReviews(),
 
-              itemCount:
-                  reviews.length,
-
-              itemBuilder:
+              builder:
                   (
                 context,
-                index,
+                snapshot,
               ) {
 
-                final review =
-                    reviews[index];
+                if (!snapshot
+                    .hasData) {
 
-                return Container(
-                  margin:
-                      const EdgeInsets
-                          .only(
-                    bottom: 20,
-                  ),
+                  return const Center(
+                    child:
+                        CircularProgressIndicator(),
+                  );
+                }
 
-                  decoration:
-                      BoxDecoration(
-                    color:
-                        Colors.white,
+                final reviews =
+                    snapshot.data!
+                        .where(
+                          (
+                            review,
+                          ) {
 
-                    borderRadius:
-                        BorderRadius.circular(
-                      20,
+                            return review
+                                .userName
+                                .toLowerCase()
+                                .contains(
+                                  searchText,
+                                );
+                          },
+                        )
+                        .toList();
+
+                if (reviews
+                    .isEmpty) {
+
+                  return const Center(
+                    child: Text(
+                      "No Reviews Found",
                     ),
+                  );
+                }
 
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors
-                            .black
-                            .withValues(
-                          alpha: .05,
-                        ),
-                        blurRadius:
-                            12,
-                      ),
-                    ],
+                return ListView.builder(
+                  padding:
+                      const EdgeInsets
+                          .all(
+                    20,
                   ),
 
-                  child: Column(
-                    children: [
+                  itemCount:
+                      reviews.length,
 
-                      ClipRRect(
+                  itemBuilder:
+                      (
+                    context,
+                    index,
+                  ) {
+
+                    final review =
+                        reviews[
+                            index];
+
+                    return Container(
+                      margin:
+                          const EdgeInsets
+                              .only(
+                        bottom: 15,
+                      ),
+
+                      padding:
+                          const EdgeInsets
+                              .all(
+                        15,
+                      ),
+
+                      decoration:
+                          BoxDecoration(
+                        color:
+                            Colors.white,
+
                         borderRadius:
-                            const BorderRadius.only(
-                          topLeft:
-                              Radius.circular(
-                            20,
-                          ),
-                          topRight:
-                              Radius.circular(
-                            20,
-                          ),
-                        ),
-
-                        child:
-                            Image.asset(
-                          review[
-                              "image"],
-
-                          height:
-                              180,
-
-                          width:
-                              double.infinity,
-
-                          fit:
-                              BoxFit.cover,
+                            BorderRadius.circular(
+                          20,
                         ),
                       ),
 
-                      Padding(
-                        padding:
-                            const EdgeInsets.all(
-                          16,
-                        ),
+                      child: Column(
+                        crossAxisAlignment:
+                            CrossAxisAlignment
+                                .start,
 
-                        child:
-                            Column(
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start,
+                        children: [
 
-                          children: [
+                          Row(
+                            children: [
 
-                            Row(
-                              children: [
+                              CircleAvatar(
+                                backgroundImage:
+                                    review.userImage
+                                            .isNotEmpty
+                                        ? MemoryImage(
+                                            base64Decode(
+                                              review.userImage,
+                                            ),
+                                          )
+                                        : null,
 
-                                const CircleAvatar(
-                                  child:
-                                      Icon(
-                                    Icons.person,
-                                  ),
-                                ),
-
-                                const SizedBox(
-                                  width:
-                                      10,
-                                ),
-
-                                Expanded(
-                                  child:
-                                      Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-
-                                    children: [
-
-                                      Text(
-                                        review[
-                                            "name"],
-
-                                        style:
-                                            GoogleFonts.poppins(
-                                          fontWeight:
-                                              FontWeight.bold,
-                                        ),
-                                      ),
-
-                                      Text(
-                                        review[
-                                            "campus"],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
-                                Container(
-                                  padding:
-                                      const EdgeInsets.symmetric(
-                                    horizontal:
-                                        10,
-                                    vertical:
-                                        5,
-                                  ),
-
-                                  decoration:
-                                      BoxDecoration(
-                                    color:
-                                        Colors.orange.shade100,
-
-                                    borderRadius:
-                                        BorderRadius.circular(
-                                      12,
-                                    ),
-                                  ),
-
-                                  child:
-                                      Row(
-                                    children: [
-
-                                      const Icon(
-                                        Icons.star,
-                                        color:
-                                            Colors.orange,
-                                        size:
-                                            16,
-                                      ),
-
-                                      const SizedBox(
-                                        width:
-                                            4,
-                                      ),
-
-                                      Text(
-                                        review["rating"]
-                                            .toString(),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                            const SizedBox(
-                              height: 15,
-                            ),
-
-                            Text(
-                              review[
-                                  "review"],
-
-                              style:
-                                  GoogleFonts.poppins(
-                                height:
-                                    1.5,
+                                child:
+                                    review.userImage
+                                            .isEmpty
+                                        ? const Icon(
+                                            Icons.person,
+                                          )
+                                        : null,
                               ),
-                            ),
 
-                            const SizedBox(
-                              height: 15,
-                            ),
+                              const SizedBox(
+                                width: 10,
+                              ),
 
-                            SizedBox(
-                              width:
-                                  double.infinity,
+                              Expanded(
+                                child:
+                                    Text(
+                                  review.userName,
+
+                                  style:
+                                      GoogleFonts.poppins(
+                                    fontWeight:
+                                        FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+
+                              Container(
+                                padding:
+                                    const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 5,
+                                ),
+
+                                decoration:
+                                    BoxDecoration(
+                                  color:
+                                      const Color(
+                                    0xffFFF7E6,
+                                  ),
+
+                                  borderRadius:
+                                      BorderRadius.circular(
+                                    12,
+                                  ),
+                                ),
+
+                                child:
+                                    Row(
+                                  children: [
+
+                                    const Icon(
+                                      Icons.star,
+                                      size: 16,
+                                      color:
+                                          Colors.orange,
+                                    ),
+
+                                    const SizedBox(
+                                      width:
+                                          4,
+                                    ),
+
+                                    Text(
+                                      review.rating
+                                          .toString(),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(
+                            height: 15,
+                          ),
+
+                          Text(
+                            review.reviewText,
+                          ),
+
+                          if (review
+                              .reviewImages
+                              .isNotEmpty)
+
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(
+                                top: 15,
+                              ),
 
                               child:
-                                  ElevatedButton.icon(
-                                onPressed:
-                                    () {
-                                  deleteReview(
-                                    index,
-                                  );
-                                },
+                                  SizedBox(
+                                height:
+                                    100,
 
-                                icon:
-                                    const Icon(
-                                  Icons.delete,
-                                  color:
-                                      Colors.white,
-                                ),
+                                child:
+                                    ListView.builder(
+                                  scrollDirection:
+                                      Axis.horizontal,
 
-                                label:
-                                    const Text(
-                                  "Delete Review",
-                                ),
+                                  itemCount:
+                                      review.reviewImages.length,
 
-                                style:
-                                    ElevatedButton.styleFrom(
-                                  backgroundColor:
-                                      Colors.red,
+                                  itemBuilder:
+                                      (
+                                    context,
+                                    imgIndex,
+                                  ) {
 
-                                  foregroundColor:
-                                      Colors.white,
+                                    return Container(
+                                      margin:
+                                          const EdgeInsets.only(
+                                        right:
+                                            10,
+                                      ),
+
+                                      child:
+                                          ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(
+                                          12,
+                                        ),
+
+                                        child:
+                                            Image.memory(
+                                          base64Decode(
+                                            review.reviewImages[
+                                                imgIndex],
+                                          ),
+
+                                          width:
+                                              100,
+
+                                          height:
+                                              100,
+
+                                          fit:
+                                              BoxFit.cover,
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 ),
                               ),
                             ),
-                          ],
-                        ),
+
+                          const SizedBox(
+                            height: 15,
+                          ),
+
+                          Align(
+                            alignment:
+                                Alignment
+                                    .centerRight,
+
+                            child:
+                                ElevatedButton.icon(
+                              style:
+                                  ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Colors.red,
+                              ),
+
+                              onPressed:
+                                  () async {
+
+                                await ReviewService()
+                                    .deleteReview(
+                                  review.id,
+                                );
+                              },
+
+                              icon:
+                                  const Icon(
+                                Icons.delete,
+                                color:
+                                    Colors.white,
+                              ),
+
+                              label:
+                                  const Text(
+                                "Delete",
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    );
+                  },
                 );
               },
             ),
+          ),
+        ],
+      ),
     );
   }
 }

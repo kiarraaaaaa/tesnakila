@@ -19,6 +19,17 @@ class CampusService {
         );
   }
 
+   Future<void> updateCampus(
+  CampusModel campus,
+) async {
+
+  await _firestore
+      .collection("campuses")
+      .doc(campus.id)
+      .update(
+        campus.toMap(),
+      );
+}
   Future<void> deleteCampus(
     String campusId,
   ) async {
@@ -128,4 +139,24 @@ class CampusService {
       (e) => e.id == id,
     );
   }
+  Future<CampusModel?> getCampusFirestoreById(
+  String id,
+) async {
+
+  final doc =
+      await _firestore
+          .collection(
+            "campuses",
+          )
+          .doc(id)
+          .get();
+
+  if (!doc.exists) {
+    return null;
+  }
+
+  return CampusModel.fromMap(
+    doc.data()!,
+  );
+}
 }

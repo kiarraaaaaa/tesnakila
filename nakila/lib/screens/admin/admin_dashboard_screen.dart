@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AdminDashboardScreen extends StatefulWidget {
   const AdminDashboardScreen({super.key});
@@ -14,13 +15,87 @@ class _AdminDashboardScreenState
 
   int selectedIndex = 0;
 
+  Widget _firestoreStatCard(
+  String title,
+  String collection,
+  IconData icon,
+) {
+
+  return StreamBuilder<QuerySnapshot>(
+    stream: FirebaseFirestore.instance
+        .collection(collection)
+        .snapshots(),
+
+    builder: (context, snapshot) {
+
+      final count =
+          snapshot.data?.docs.length ?? 0;
+
+      return Container(
+        width: 240,
+
+        padding:
+            const EdgeInsets.all(20),
+
+        decoration: BoxDecoration(
+          color: Colors.white,
+
+          borderRadius:
+              BorderRadius.circular(25),
+        ),
+
+        child: Column(
+          crossAxisAlignment:
+              CrossAxisAlignment.start,
+
+          children: [
+
+            Icon(
+              icon,
+              size: 35,
+              color: const Color(
+                0xff2563EB,
+              ),
+            ),
+
+            const SizedBox(
+              height: 15,
+            ),
+
+            Text(
+              count.toString(),
+
+              style:
+                  GoogleFonts.poppins(
+                fontSize: 28,
+                fontWeight:
+                    FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(
+              height: 5,
+            ),
+
+            Text(
+              title,
+
+              style:
+                  GoogleFonts.poppins(
+                color: Colors.grey,
+              ),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
   @override
   Widget build(BuildContext context) {
 
-    bool isDesktop =
-        MediaQuery.of(context).size.width >
-            1000;
-
+  
     return Scaffold(
       backgroundColor:
           const Color(0xffF8FAFC),
@@ -64,8 +139,8 @@ class _AdminDashboardScreenState
                         BoxDecoration(
                       color:
                           Colors.white
-                              .withOpacity(
-                        .08,
+                              .withValues(
+                        alpha: .08,
                       ),
 
                       borderRadius:
@@ -272,36 +347,37 @@ class _AdminDashboardScreenState
                   ),
 
                   Wrap(
-                    spacing: 20,
-                    runSpacing: 20,
+  spacing: 20,
+  runSpacing: 20,
 
-                    children: [
+  children: [
 
-                      _statCard(
-                        "Campuses",
-                        "12",
-                        Icons.school,
-                      ),
+    _firestoreStatCard(
+      "Campuses",
+      "campuses",
+      Icons.school,
+    ),
 
-                      _statCard(
-                        "Users",
-                        "245",
-                        Icons.people,
-                      ),
+    _firestoreStatCard(
+      "Users",
+      "users",
+      Icons.people,
+    ),
 
-                      _statCard(
-                        "Reviews",
-                        "524",
-                        Icons.reviews,
-                      ),
+    _firestoreStatCard(
+      "Reviews",
+      "reviews",
+      Icons.reviews,
+    ),
 
-                      _statCard(
-                        "Favorites",
-                        "180",
-                        Icons.favorite,
-                      ),
-                    ],
-                  ),
+    _firestoreStatCard(
+      "Favorites",
+      "favorites",
+      Icons.favorite,
+    ),
+  ],
+),
+                
 
                   const SizedBox(
                     height: 30,
@@ -441,73 +517,4 @@ class _AdminDashboardScreenState
       },
     );
   }
-
-  Widget _statCard(
-    String title,
-    String value,
-    IconData icon,
-  ) {
-
-    return Container(
-      width: 240,
-
-      padding:
-          const EdgeInsets.all(20),
-
-      decoration: BoxDecoration(
-        color: Colors.white,
-
-        borderRadius:
-            BorderRadius.circular(
-          25,
-        ),
-      ),
-
-      child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
-
-        children: [
-
-          Icon(
-            icon,
-            size: 35,
-            color:
-                const Color(
-              0xff2563EB,
-            ),
-          ),
-
-          const SizedBox(
-            height: 15,
-          ),
-
-          Text(
-            value,
-
-            style:
-                GoogleFonts.poppins(
-              fontSize: 28,
-              fontWeight:
-                  FontWeight.bold,
-            ),
-          ),
-
-          const SizedBox(
-            height: 5,
-          ),
-
-          Text(
-            title,
-
-            style:
-                GoogleFonts.poppins(
-              color:
-                  Colors.grey,
-            ),
-          ),
-        ],
-      ),
-    );
   }
-}

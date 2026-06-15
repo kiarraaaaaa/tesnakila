@@ -46,6 +46,24 @@ class ReviewService {
       .doc(reviewId)
       .delete();
 }
+Stream<List<ReviewModel>>
+    getAllReviews() {
+
+  return _firestore
+      .collection("reviews")
+      .snapshots()
+      .map((snapshot) {
+
+    return snapshot.docs
+        .map(
+          (doc) =>
+              ReviewModel.fromMap(
+            doc.data(),
+          ),
+        )
+        .toList();
+  });
+}
   Stream<List<ReviewModel>>
       getReviewsByCampus(
     String campusId,
