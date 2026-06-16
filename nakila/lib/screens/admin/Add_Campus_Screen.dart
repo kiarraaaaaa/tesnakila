@@ -1,9 +1,9 @@
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
-
+import 'dart:convert';
+import 'dart:typed_data';
 import '../../models/campus_model.dart';
 import '../../services/campus_service.dart';
 
@@ -41,25 +41,30 @@ class _AddCampusScreenState
   final descriptionController =
       TextEditingController();
 
-  File? imageFile;
+  Uint8List? imageBytes;
+String imageBase64 = "";
 
   Future<void> pickImage() async {
 
-    final image =
-        await ImagePicker()
-            .pickImage(
-      source:
-          ImageSource.gallery,
+  final image =
+      await ImagePicker()
+          .pickImage(
+    source: ImageSource.gallery,
+  );
+
+  if (image != null) {
+
+    imageBytes =
+        await image.readAsBytes();
+
+    imageBase64 =
+        base64Encode(
+      imageBytes!,
     );
 
-    if (image != null) {
-
-      setState(() {
-        imageFile =
-            File(image.path);
-      });
-    }
+    setState(() {});
   }
+}
 
   Future<void> addCampus()
   async {
@@ -73,8 +78,7 @@ class _AddCampusScreenState
       name:
           nameController.text,
 
-      image:
-          "",
+      image: imageBase64,
 
       location:
           locationController.text,
@@ -128,7 +132,8 @@ class _AddCampusScreenState
     descriptionController.clear();
 
     setState(() {
-      imageFile = null;
+      imageBytes == null;
+      imageBase64 = "";
     });
   }
 
@@ -179,7 +184,7 @@ class _AddCampusScreenState
                   ),
                 ),
 
-                child: imageFile ==
+                child: imageBytes ==
                         null
                     ? const Column(
                         mainAxisAlignment:
@@ -209,25 +214,10 @@ class _AddCampusScreenState
       20,
     ),
 
-    child: kIsWeb
-
-        ? Container(
-            color:
-                Colors.grey.shade200,
-
-            child:
-                const Center(
-              child: Icon(
-                Icons.image,
-                size: 70,
-              ),
-            ),
-          )
-
-        : Image.file(
-            imageFile!,
-            fit: BoxFit.cover,
-          ),
+    child: Image.memory(
+  imageBytes!,
+  fit: BoxFit.cover,
+),
   ),
               ),
             ),

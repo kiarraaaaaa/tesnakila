@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'dart:convert';
 import '../models/campus_model.dart';
 
 class CampusCard extends StatelessWidget {
@@ -61,27 +61,38 @@ class CampusCard extends StatelessWidget {
               children: [
 
                 Hero(
-                  tag: campus.id,
+  tag: campus.id,
 
-                  child: ClipRRect(
-                    borderRadius:
-                        const BorderRadius.only(
-                      topLeft:
-                          Radius.circular(24),
-                      topRight:
-                          Radius.circular(24),
-                    ),
+  child: campus.image.isEmpty
 
-                    child: Image.asset(
-                      campus.image,
+      ? Container(
+          color: Colors.grey.shade200,
 
-                      width: double.infinity,
-                      height: 200,
+          child: const Center(
+            child: Icon(
+              Icons.image,
+              size: 70,
+            ),
+          ),
+        )
 
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
+      : campus.image.startsWith(
+          "assets/",
+        )
+
+          ? Image.asset(
+              campus.image,
+              fit: BoxFit.cover,
+            )
+
+          : Image.memory(
+              base64Decode(
+                campus.image,
+              ),
+              fit: BoxFit.cover,
+            ),
+),
+                
 
                 Positioned(
                   top: 12,
