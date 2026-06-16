@@ -68,7 +68,8 @@ class _LoginScreenState
                     fontSize: 30,
                     fontWeight:
                         FontWeight.bold,
-                    color: Colors.white,
+                    color: Theme.of(context)
+        .cardColor,
                   ),
                 ),
 
@@ -89,7 +90,8 @@ class _LoginScreenState
                       const EdgeInsets.all(25),
 
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context)
+        .cardColor,
                     borderRadius:
                         BorderRadius.circular(30),
                     boxShadow: [

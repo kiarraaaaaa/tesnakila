@@ -76,7 +76,8 @@ class _RegisterScreenState
                     fontSize: 30,
                     fontWeight:
                         FontWeight.bold,
-                    color: Colors.white,
+                    color: Theme.of(context)
+        .cardColor,
                   ),
                 ),
 
@@ -98,7 +99,8 @@ class _RegisterScreenState
                       const EdgeInsets.all(25),
 
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context)
+        .cardColor,
                     borderRadius:
                         BorderRadius.circular(30),
                     boxShadow: [

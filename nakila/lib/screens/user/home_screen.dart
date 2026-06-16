@@ -121,8 +121,10 @@ class _HomeScreenState
             900;
 
     return Scaffold(
-      backgroundColor:
-          const Color(0xffF8FAFC),
+  backgroundColor:
+      Theme.of(context)
+          .scaffoldBackgroundColor,
+
 
       body: Row(
         children: [
@@ -265,10 +267,8 @@ class _HomeScreenState
                                 const EdgeInsets
                                     .all(18),
 
-                            decoration:
-                                BoxDecoration(
-                              color:
-                                  Colors.white,
+                            decoration: BoxDecoration(
+  color: Theme.of(context).cardColor,
 
                               borderRadius:
                                   BorderRadius
@@ -303,9 +303,14 @@ class _HomeScreenState
 
     : "Current Location: $currentLocation",
 
-                                    style:
-                                        GoogleFonts.poppins(),
-                                  ),
+                                    style: GoogleFonts.poppins(
+  color:
+      Theme.of(context)
+          .textTheme
+          .bodyMedium
+          ?.color,
+                                    ),
+                                      ),
                                 ),
 
                                 ElevatedButton(
@@ -349,7 +354,8 @@ class _HomeScreenState
                                   true,
 
                               fillColor:
-                                  Colors.white,
+    Theme.of(context)
+        .cardColor,
 
                               border:
                                   OutlineInputBorder(

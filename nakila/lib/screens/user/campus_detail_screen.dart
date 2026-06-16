@@ -16,7 +16,10 @@ class CampusDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffF8FAFC),
+  backgroundColor:
+      Theme.of(context)
+          .scaffoldBackgroundColor,
+
 
       body: CustomScrollView(
         slivers: [
@@ -197,7 +200,8 @@ Wrap(
                     decoration:
                         BoxDecoration(
                       color:
-                          Colors.white,
+    Theme.of(context)
+        .cardColor,
 
                       borderRadius:
                           BorderRadius
@@ -308,15 +312,14 @@ SizedBox(
           ),
 
           decoration: BoxDecoration(
-            color:
-                const Color(
-              0xffFFF7E6,
-            ),
-            borderRadius:
-                BorderRadius.circular(
-              15,
-            ),
-          ),
+  color: Theme.of(context)
+      .cardColor,
+
+  borderRadius:
+      BorderRadius.circular(
+    15,
+  ),
+),
 
           child: Text(
             "🏆 $achievement",
@@ -412,7 +415,8 @@ SizedBox(
         ),
 
         decoration: BoxDecoration(
-  color: Colors.white,
+  color: Theme.of(context)
+        .cardColor,
   borderRadius: BorderRadius.circular(20),
 
   boxShadow: [
@@ -454,7 +458,8 @@ SizedBox(
       ),
 
       decoration: BoxDecoration(
-  color: Colors.white,
+  color: Theme.of(context)
+        .cardColor,
   borderRadius: BorderRadius.circular(20),
 
   boxShadow: [

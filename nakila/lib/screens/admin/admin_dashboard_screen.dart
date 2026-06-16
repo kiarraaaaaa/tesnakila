@@ -47,7 +47,8 @@ class _AdminDashboardScreenState
             const EdgeInsets.all(20),
 
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context)
+        .cardColor,
 
           borderRadius:
               BorderRadius.circular(25),
@@ -106,8 +107,9 @@ class _AdminDashboardScreenState
 
   
     return Scaffold(
-      backgroundColor:
-          const Color(0xffF8FAFC),
+  backgroundColor:
+      Theme.of(context)
+          .scaffoldBackgroundColor,
 
       body: Row(
         children: [
@@ -551,7 +553,8 @@ const SizedBox(
     return ListTile(
       leading: Icon(
         icon,
-        color: Colors.white,
+        color: Theme.of(context)
+        .cardColor,
       ),
 
       title: Text(
@@ -559,7 +562,8 @@ const SizedBox(
 
         style:
             GoogleFonts.poppins(
-          color: Colors.white,
+          color: Theme.of(context)
+        .cardColor,
         ),
       ),
 

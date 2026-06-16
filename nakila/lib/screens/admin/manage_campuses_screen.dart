@@ -29,10 +29,9 @@ class _ManageCampusesScreenState
   ) {
 
     return Scaffold(
-      backgroundColor:
-          const Color(
-        0xffF8FAFC,
-      ),
+  backgroundColor:
+      Theme.of(context)
+          .scaffoldBackgroundColor,
 
       appBar: AppBar(
         title: const Text(
@@ -60,7 +59,7 @@ class _ManageCampusesScreenState
 
         child: const Icon(
           Icons.add,
-          color: Colors.white,
+          
         ),
       ),
 
@@ -237,7 +236,8 @@ class _ManageCampusesScreenState
                           ),
 
                           decoration: BoxDecoration(
-  color: Colors.white,
+  color: Theme.of(context)
+        .cardColor,
 
   borderRadius:
       BorderRadius.circular(20),

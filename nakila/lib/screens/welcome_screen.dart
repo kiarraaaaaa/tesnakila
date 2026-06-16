@@ -83,7 +83,8 @@ class WelcomeScreen extends StatelessWidget {
                     Text(
                       "NAKILA",
                       style: GoogleFonts.poppins(
-                        color: Colors.white,
+                        color: Theme.of(context)
+        .cardColor,
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 4,
@@ -115,7 +116,8 @@ class WelcomeScreen extends StatelessWidget {
                             "Find Your Dream Campus",
                             style:
                                 GoogleFonts.poppins(
-                              color: Colors.white,
+                              color: Theme.of(context)
+        .cardColor,
                               fontSize: 30,
                               fontWeight:
                                   FontWeight.bold,

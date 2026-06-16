@@ -8,8 +8,10 @@ class AboutScreen extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      backgroundColor:
-          const Color(0xffF8FAFC),
+  backgroundColor:
+      Theme.of(context)
+          .scaffoldBackgroundColor,
+
 
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -72,7 +74,8 @@ class AboutScreen extends StatelessWidget {
 
                     style:
                         GoogleFonts.poppins(
-                      color: Colors.white,
+                      color: Theme.of(context)
+        .cardColor,
                       fontSize: 30,
                       fontWeight:
                           FontWeight.bold,
@@ -141,6 +144,7 @@ class AboutScreen extends StatelessWidget {
             const SizedBox(height: 20),
 
             _teamCard(
+              context: context,
               image:
                   "assets/User/bella.jpg",
 
@@ -153,6 +157,7 @@ class AboutScreen extends StatelessWidget {
             const SizedBox(height: 15),
 
             _teamCard(
+              context: context,
               image:
                   "assets/User/kiarra.jpg",
 
@@ -165,6 +170,7 @@ class AboutScreen extends StatelessWidget {
             const SizedBox(height: 15),
 
             _teamCard(
+              context: context,
               image:
                   "assets/User/nabila.jpg",
 
@@ -185,7 +191,8 @@ class AboutScreen extends StatelessWidget {
               ),
 
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context)
+        .cardColor,
 
                 borderRadius:
                     BorderRadius.circular(
@@ -235,6 +242,7 @@ class AboutScreen extends StatelessWidget {
   }
 
   Widget _teamCard({
+    required BuildContext context,
     required String image,
     required String name,
     required String role,
@@ -245,7 +253,7 @@ class AboutScreen extends StatelessWidget {
           const EdgeInsets.all(15),
 
       decoration: BoxDecoration(
-        color: Colors.white,
+  color: Theme.of(context).cardColor,
 
         borderRadius:
             BorderRadius.circular(

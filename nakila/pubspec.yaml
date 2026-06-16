@@ -33,6 +33,7 @@ dependencies:
   url_launcher_web: ^2.4.1
   flutter_spinkit: ^5.2.1
   firebase_storage: ^12.4.10
+  provider: ^6.1.5+1
 
 flutter:
   uses-material-design: true

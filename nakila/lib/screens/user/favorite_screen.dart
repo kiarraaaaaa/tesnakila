@@ -15,10 +15,9 @@ class FavoriteScreen extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      backgroundColor:
-          const Color(
-        0xffF8FAFC,
-      ),
+  backgroundColor:
+      Theme.of(context)
+          .scaffoldBackgroundColor,
 
       appBar: AppBar(
         backgroundColor:
@@ -175,7 +174,8 @@ if (!snapshot.hasData) {
   ),
 
   decoration: BoxDecoration(
-    color: Colors.white,
+    color: Theme.of(context)
+        .cardColor,
 
     borderRadius:
         BorderRadius.circular(

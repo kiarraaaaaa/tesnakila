@@ -1,5 +1,6 @@
 import 'dart:convert';
-
+import 'package:provider/provider.dart';
+import '../../providers/theme_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -91,14 +92,15 @@ Future<void> loadUserData() async {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      backgroundColor:
-          const Color(
-        0xffF8FAFC,
-      ),
+  backgroundColor:
+      Theme.of(context)
+          .scaffoldBackgroundColor,
 
       appBar: AppBar(
-        backgroundColor:
-            Colors.white,
+  backgroundColor:
+      Theme.of(context)
+          .scaffoldBackgroundColor,
+
 
         elevation: 0,
 
@@ -109,7 +111,10 @@ Future<void> loadUserData() async {
 
           style:
               GoogleFonts.poppins(
-            color: Colors.black,
+            color: Theme.of(context)
+      .textTheme
+      .titleLarge
+      ?.color,
             fontWeight:
                 FontWeight.bold,
           ),
@@ -254,7 +259,8 @@ Future<void> loadUserData() async {
               decoration:
                   BoxDecoration(
                 color:
-                    Colors.white,
+                    Theme.of(context)
+        .cardColor,
 
                 borderRadius:
                     BorderRadius
@@ -435,6 +441,78 @@ await ActivityService()
             const SizedBox(
               height: 20,
             ),
+            Container(
+  padding: const EdgeInsets.all(20),
+
+  decoration: BoxDecoration(
+    color: Theme.of(context)
+        .cardColor,
+
+    borderRadius:
+        BorderRadius.circular(24),
+
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withValues(
+          alpha: .05,
+        ),
+        blurRadius: 15,
+      ),
+    ],
+  ),
+
+  child: Column(
+    crossAxisAlignment:
+        CrossAxisAlignment.start,
+
+    children: [
+
+      Text(
+        "Preferences",
+        style:
+            GoogleFonts.poppins(
+          fontSize: 18,
+          fontWeight:
+              FontWeight.bold,
+        ),
+      ),
+
+      const SizedBox(
+        height: 15,
+      ),
+
+      SwitchListTile(
+        contentPadding:
+            EdgeInsets.zero,
+
+        secondary:
+            const Icon(
+          Icons.dark_mode,
+        ),
+
+        title: const Text(
+          "Dark Mode",
+        ),
+
+        value:
+            context
+                .watch<
+                    ThemeProvider>()
+                .isDarkMode,
+
+        onChanged: (value) {
+
+          context
+              .read<
+                  ThemeProvider>()
+              .toggleTheme();
+        },
+      ),
+
+      
+    ],
+  ),
+),
           ],
         ),
       ),

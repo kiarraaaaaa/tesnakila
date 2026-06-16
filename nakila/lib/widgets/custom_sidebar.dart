@@ -67,7 +67,8 @@ class CustomSidebar extends StatelessWidget {
                       borderRadius:
                           BorderRadius.circular(15),
 
-                      color: Colors.white,
+                      color: Theme.of(context)
+        .cardColor,
                     ),
 
                     child: ClipRRect(
@@ -93,7 +94,8 @@ class CustomSidebar extends StatelessWidget {
                           "NAKILA",
                           style:
                               GoogleFonts.poppins(
-                            color: Colors.white,
+                            color: Theme.of(context)
+        .cardColor,
                             fontSize: 18,
                             fontWeight:
                                 FontWeight.bold,
@@ -217,7 +219,8 @@ class CustomSidebar extends StatelessWidget {
         userName,
         overflow: TextOverflow.ellipsis,
         style: GoogleFonts.poppins(
-          color: Colors.white,
+          color: Theme.of(context)
+        .cardColor,
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -291,7 +294,8 @@ class CustomSidebar extends StatelessWidget {
                     "Logout",
                     style:
                         GoogleFonts.poppins(
-                      color: Colors.white,
+                      color: Theme.of(context)
+        .cardColor,
                       fontWeight:
                           FontWeight.w600,
                     ),

@@ -180,10 +180,9 @@ programs.clear();
   ) {
 
     return Scaffold(
-      backgroundColor:
-          const Color(
-        0xffF8FAFC,
-      ),
+  backgroundColor:
+      Theme.of(context)
+          .scaffoldBackgroundColor,
 
       appBar: AppBar(
         title:
