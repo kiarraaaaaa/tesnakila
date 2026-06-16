@@ -22,26 +22,48 @@ class CampusDetailScreen extends StatelessWidget {
         slivers: [
 
           SliverAppBar(
-            expandedHeight: 220,
-            
-            pinned: true,
+  expandedHeight: 220,
+  pinned: true,
 
-            backgroundColor:
-                const Color(0xff1E40AF),
+  backgroundColor:
+      const Color(0xff1E40AF),
 
-            flexibleSpace:
-                FlexibleSpaceBar(
-              background: Hero(
-                tag: campus.id,
+  flexibleSpace:
+      FlexibleSpaceBar(
+    background: Hero(
+      tag: campus.id,
 
-                child: Image.asset(
-  campus.image,
-  fit: BoxFit.cover,
-),
+      child: campus.image.isEmpty
+
+          ? Container(
+              color: Colors.grey.shade200,
+
+              child: const Center(
+                child: Icon(
+                  Icons.image,
+                  size: 70,
+                ),
               ),
-            ),
-          ),
+            )
 
+          : campus.image.startsWith(
+              "assets/",
+            )
+
+              ? Image.asset(
+                  campus.image,
+                  fit: BoxFit.cover,
+                )
+
+              : Image.memory(
+                  base64Decode(
+                    campus.image,
+                  ),
+                  fit: BoxFit.cover,
+                ),
+    ),
+  ),
+),
           SliverToBoxAdapter(
             child: Padding(
   padding: const EdgeInsets.all(20),
@@ -272,35 +294,38 @@ SizedBox(
 
                   const SizedBox(height: 15),
 
-                  ...campus.achievements
-    .map(
-      (achievement) => Padding(
-        padding:
-            const EdgeInsets.symmetric(
-          vertical: 4,
-        ),
+                  Wrap(
+  spacing: 10,
+  runSpacing: 10,
 
-        child: Row(
-          children: [
+  children: campus.achievements
+      .map(
+        (achievement) => Container(
+          padding:
+              const EdgeInsets.symmetric(
+            horizontal: 14,
+            vertical: 10,
+          ),
 
-            const Icon(
-              Icons.emoji_events,
-              color: Colors.amber,
-              size: 18,
+          decoration: BoxDecoration(
+            color:
+                const Color(
+              0xffFFF7E6,
             ),
-
-            const SizedBox(width: 8),
-
-            Expanded(
-              child: Text(
-                achievement,
-               ),
+            borderRadius:
+                BorderRadius.circular(
+              15,
             ),
-          ],
+          ),
+
+          child: Text(
+            "🏆 $achievement",
+          ),
         ),
-      ),
-    )
-    .toList(),
+      )
+      .toList(),
+),
+                
 
                   const SizedBox(height: 25),
 
@@ -632,12 +657,13 @@ SizedBox(
                   ),
                 ]
             ),
-          ),
+            ),
           ),
         ],
       ),
     );
   }
+}
 
   Widget _infoItem(
     String title,
@@ -661,4 +687,3 @@ SizedBox(
       ],
     );
   }
-}

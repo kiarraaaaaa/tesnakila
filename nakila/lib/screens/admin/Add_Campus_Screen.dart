@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -40,10 +40,21 @@ class _AddCampusScreenState
 
   final descriptionController =
       TextEditingController();
+  
+  final historyController =
+    TextEditingController();
+
+final achievementController =
+    TextEditingController();
+
+final programController =
+    TextEditingController();
 
   Uint8List? imageBytes;
-String imageBase64 = "";
-
+  String imageBase64 = "";
+  List<String> achievements = [];
+  List<String> programs = [];
+  
   Future<void> pickImage() async {
 
   final image =
@@ -52,19 +63,23 @@ String imageBase64 = "";
     source: ImageSource.gallery,
   );
 
-  if (image != null) {
+ if (image != null) {
 
-    imageBytes =
-        await image.readAsBytes();
+  imageBytes =
+      await image.readAsBytes();
 
-    imageBase64 =
-        base64Encode(
-      imageBytes!,
-    );
+  imageBase64 =
+      base64Encode(
+    imageBytes!,
+  );
 
-    setState(() {});
+  print(
+    "Image loaded: ${imageBytes!.length}",
+  );
+
+  setState(() {});
+ }
   }
-}
 
   Future<void> addCampus()
   async {
@@ -74,6 +89,22 @@ String imageBase64 = "";
       id: DateTime.now()
           .millisecondsSinceEpoch
           .toString(),
+
+      history:
+    historyController.text,
+
+foundedYear:
+    foundedController.text,
+
+worldRanking:
+    rankingController.text,
+
+
+achievements:
+    achievements,
+
+programs:
+    programs,
 
       name:
           nameController.text,
@@ -93,18 +124,7 @@ String imageBase64 = "";
       description:
           descriptionController.text,
 
-      history:
-          "Campus History",
-
-      foundedYear:
-          foundedController.text,
-
-      worldRanking:
-          rankingController.text,
-
-      achievements: [],
-
-      programs: [],
+    
     );
 
     await CampusService()
@@ -130,9 +150,18 @@ String imageBase64 = "";
     rankingController.clear();
     foundedController.clear();
     descriptionController.clear();
+historyController.clear();
+
+achievementController.clear();
+
+programController.clear();
+
+achievements.clear();
+
+programs.clear();
 
     setState(() {
-      imageBytes == null;
+      imageBytes = null;
       imageBase64 = "";
     });
   }
@@ -268,7 +297,174 @@ String imageBase64 = "";
                   "Description",
               maxLines: 4,
             ),
+            _field(
+  controller:
+      historyController,
+  hint:
+      "History",
+  maxLines: 5,
+),
 
+Text(
+  "Achievements",
+  style: GoogleFonts.poppins(
+    fontWeight:
+        FontWeight.bold,
+    fontSize: 16,
+  ),
+),
+
+const SizedBox(
+  height: 10,
+),
+
+_field(
+  controller:
+      achievementController,
+  hint:
+      "Achievement",
+),
+
+SizedBox(
+  width: double.infinity,
+
+  child: ElevatedButton(
+    onPressed: () {
+
+      if (achievementController
+          .text
+          .trim()
+          .isEmpty) {
+        return;
+      }
+
+      setState(() {
+
+        achievements.add(
+          achievementController.text,
+        );
+
+        achievementController.clear();
+      });
+    },
+
+    child: const Text(
+      "Add Achievement",
+    ),
+  ),
+),
+
+const SizedBox(
+  height: 10,
+),
+
+Wrap(
+  spacing: 8,
+  runSpacing: 8,
+
+  children:
+      achievements
+          .map(
+            (e) => Chip(
+              label: Text(
+                e,
+              ),
+
+              onDeleted: () {
+
+                setState(() {
+
+                  achievements.remove(
+                    e,
+                  );
+                });
+              },
+            ),
+          )
+          .toList(),
+),
+const SizedBox(
+  height: 20,
+),
+
+Text(
+  "Programs",
+  style: GoogleFonts.poppins(
+    fontWeight:
+        FontWeight.bold,
+    fontSize: 16,
+  ),
+),
+
+const SizedBox(
+  height: 10,
+),
+
+_field(
+  controller:
+      programController,
+  hint:
+      "Program",
+),
+
+SizedBox(
+  width: double.infinity,
+
+  child: ElevatedButton(
+    onPressed: () {
+
+      if (programController
+          .text
+          .trim()
+          .isEmpty) {
+        return;
+      }
+
+      setState(() {
+
+        programs.add(
+          programController.text,
+        );
+
+        programController.clear();
+      });
+    },
+
+    child: const Text(
+      "Add Program",
+    ),
+  ),
+),
+
+const SizedBox(
+  height: 10,
+),
+
+Wrap(
+  spacing: 8,
+  runSpacing: 8,
+
+  children:
+      programs
+          .map(
+            (e) => Chip(
+              label: Text(
+                e,
+              ),
+
+              onDeleted: () {
+
+                setState(() {
+
+                  programs.remove(
+                    e,
+                  );
+                });
+              },
+            ),
+          )
+          .toList(),
+),
             const SizedBox(
               height: 20,
             ),

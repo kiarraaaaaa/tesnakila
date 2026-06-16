@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:image_picker/image_picker.dart';
 import '../../models/campus_model.dart';
 import '../../services/campus_service.dart';
 
@@ -29,15 +31,47 @@ class _EditCampusScreenState
   late TextEditingController historyController;
 
   bool isLoading = false;
+  String imageBase64 = "";
+  Uint8List? imageBytes;
+  List<String> achievements = [];
+List<String> programs = [];
 
+final achievementController =
+    TextEditingController();
+
+final programController =
+    TextEditingController();
+    
   @override
   void initState() {
     super.initState();
 
+    
     nameController =
         TextEditingController(
       text: widget.campus.name,
     );
+
+    historyController =
+    TextEditingController(
+  text: widget.campus.history,
+);
+
+    if (
+  widget.campus.image.isNotEmpty &&
+  !widget.campus.image.startsWith(
+    "assets/",
+  )
+) {
+
+  imageBase64 =
+      widget.campus.image;
+
+  imageBytes =
+      base64Decode(
+    imageBase64,
+  );
+}
 
     locationController =
         TextEditingController(
@@ -63,12 +97,39 @@ class _EditCampusScreenState
         TextEditingController(
       text: widget.campus.description,
     );
+achievements =
+    List<String>.from(
+  widget.campus.achievements,
+);
 
-    historyController =
-        TextEditingController(
-      text: widget.campus.history,
-    );
+programs =
+    List<String>.from(
+  widget.campus.programs,
+);
   }
+
+  Future<void> pickImage() async {
+
+  final image =
+      await ImagePicker()
+          .pickImage(
+    source:
+        ImageSource.gallery,
+  );
+
+  if (image != null) {
+
+    imageBytes =
+        await image.readAsBytes();
+
+    imageBase64 =
+        base64Encode(
+      imageBytes!,
+    );
+
+    setState(() {});
+  }
+}
 
   Future<void> updateCampus() async {
 
@@ -84,7 +145,11 @@ class _EditCampusScreenState
           nameController.text,
 
       image:
-          widget.campus.image,
+    imageBase64.isEmpty
+
+        ? widget.campus.image
+
+        : imageBase64,
 
       location:
           locationController.text,
@@ -111,10 +176,10 @@ class _EditCampusScreenState
           rankingController.text,
 
       achievements:
-          widget.campus.achievements,
+          achievements,
 
       programs:
-          widget.campus.programs,
+          programs,
 
       isFavorite:
           widget.campus.isFavorite,
@@ -169,7 +234,70 @@ class _EditCampusScreenState
 
         child: Column(
           children: [
+            GestureDetector(
+  onTap: pickImage,
 
+  child: Container(
+    height: 180,
+    width: double.infinity,
+
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius:
+          BorderRadius.circular(
+        20,
+      ),
+    ),
+
+    child: imageBytes != null
+
+        ? ClipRRect(
+            borderRadius:
+                BorderRadius.circular(
+              20,
+            ),
+
+            child: Image.memory(
+              imageBytes!,
+              fit: BoxFit.cover,
+            ),
+          )
+
+        : widget.campus.image.startsWith(
+    "assets/",
+  )
+
+    ? ClipRRect(
+        borderRadius:
+            BorderRadius.circular(
+          20,
+        ),
+
+        child: Image.asset(
+          widget.campus.image,
+          fit: BoxFit.cover,
+        ),
+      )
+
+    : ClipRRect(
+        borderRadius:
+            BorderRadius.circular(
+          20,
+        ),
+
+        child: Image.memory(
+          base64Decode(
+            widget.campus.image,
+          ),
+          fit: BoxFit.cover,
+        ),
+      ),
+  ),
+            ),
+
+const SizedBox(
+  height: 20,
+),
             _field(
               controller:
                   nameController,
@@ -220,6 +348,119 @@ class _EditCampusScreenState
                   "History",
               maxLines: 6,
             ),
+Text(
+  "Achievements",
+  style: GoogleFonts.poppins(
+    fontWeight: FontWeight.bold,
+    fontSize: 16,
+  ),
+),
+
+const SizedBox(height: 10),
+
+_field(
+  controller: achievementController,
+  hint: "Achievement",
+),
+
+SizedBox(
+  width: double.infinity,
+  child: ElevatedButton(
+    onPressed: () {
+      if (achievementController.text.trim().isEmpty) {
+        return;
+      }
+
+      setState(() {
+        achievements.add(
+          achievementController.text,
+        );
+
+        achievementController.clear();
+      });
+    },
+    child: const Text(
+      "Add Achievement",
+    ),
+  ),
+),
+
+const SizedBox(height: 10),
+
+Wrap(
+  spacing: 8,
+  runSpacing: 8,
+  children: achievements
+      .map(
+        (e) => Chip(
+          label: Text(e),
+          onDeleted: () {
+            setState(() {
+              achievements.remove(e);
+            });
+          },
+        ),
+      )
+      .toList(),
+),
+
+const SizedBox(height: 20),
+
+Text(
+  "Programs",
+  style: GoogleFonts.poppins(
+    fontWeight: FontWeight.bold,
+    fontSize: 16,
+  ),
+),
+
+const SizedBox(height: 10),
+
+_field(
+  controller: programController,
+  hint: "Program",
+),
+
+SizedBox(
+  width: double.infinity,
+  child: ElevatedButton(
+    onPressed: () {
+      if (programController.text.trim().isEmpty) {
+        return;
+      }
+
+      setState(() {
+        programs.add(
+          programController.text,
+        );
+
+        programController.clear();
+      });
+    },
+    child: const Text(
+      "Add Program",
+    ),
+  ),
+),
+
+const SizedBox(height: 10),
+
+Wrap(
+  spacing: 8,
+  runSpacing: 8,
+  children: programs
+      .map(
+        (e) => Chip(
+          label: Text(e),
+          onDeleted: () {
+            setState(() {
+              programs.remove(e);
+            });
+          },
+        ),
+      )
+      .toList(),
+),
 
             const SizedBox(
               height: 20,
