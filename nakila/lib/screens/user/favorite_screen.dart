@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:nakila/models/campus_model.dart';
-
 import '../../services/favorite_service.dart';
 import '../../services/campus_service.dart';
-
-import '../../widgets/campus_card.dart';
-
 import 'campus_detail_screen.dart';
 
 class FavoriteScreen extends StatelessWidget {
@@ -33,17 +28,30 @@ class FavoriteScreen extends StatelessWidget {
 
         centerTitle: true,
 
-        title: Text(
-          "Favorite Campuses",
+        title: Row(
+  mainAxisSize: MainAxisSize.min,
+  children: [
 
-          style:
-              GoogleFonts.poppins(
-            color: Colors.black,
-            fontWeight:
-                FontWeight.bold,
-          ),
-        ),
+    const Icon(
+      Icons.favorite,
+      color: Colors.red,
+    ),
+
+    const SizedBox(width: 8),
+
+    Text(
+      "Favorite Campuses",
+      style:
+          GoogleFonts.poppins(
+        color: Colors.black,
+        fontWeight:
+            FontWeight.bold,
       ),
+    ),
+  ],
+),
+        ),
+      
 
       body: StreamBuilder<
           QuerySnapshot>(
@@ -130,67 +138,281 @@ class FavoriteScreen extends StatelessWidget {
             child: ListView.builder(
   itemCount: docs.length,
 
-  itemBuilder:
-      (context, index) {
+ itemBuilder:
+    (context, index) {
 
-                final campusId =
-                    docs[index]
-                        ["campusId"];
+  final campusId =
+      docs[index]["campusId"];
 
-                final campus =
-                    CampusService
-                        .getCampusById(
-                  campusId,
-                );
+  return FutureBuilder(
+    future:
+        CampusService()
+            .getCampusFirestoreById(
+      campusId,
+    ),
 
-                return CampusCard(
-  campus: CampusModel(
-    id: campus.id,
-    name: campus.name,
-    image: campus.image,
-    location: campus.location,
-    country: campus.country,
-    rating: campus.rating,
-    verified: campus.verified,
-    description: campus.description,
-    history: campus.history,
-    foundedYear: campus.foundedYear,
-    worldRanking: campus.worldRanking,
-    achievements: campus.achievements,
-    programs: campus.programs,
+    builder:
+        (context, snapshot) {
 
-    isFavorite: true,
+      if (snapshot.connectionState ==
+    ConnectionState.waiting) {
+  return const Center(
+    child:
+        CircularProgressIndicator(),
+  );
+}
+
+if (!snapshot.hasData) {
+  return const SizedBox();
+}
+
+      final campus =
+          snapshot.data!;
+
+     return Container(
+  margin: const EdgeInsets.only(
+    bottom: 15,
   ),
 
-                  onTap: () {
+  decoration: BoxDecoration(
+    color: Colors.white,
 
-                    Navigator.push(
-                      context,
+    borderRadius:
+        BorderRadius.circular(
+      20,
+    ),
+  
+    boxShadow: [
+      BoxShadow(
+        color:
+            Colors.black.withValues(
+          alpha: .08,
+        ),
+      
+        blurRadius: 12,
+        offset: const Offset(
+          0,
+          5,
+        ),
+      ),
+    ],
+  ),
 
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            CampusDetailScreen(
-                          campus:
-                              campus,
+  child: InkWell(
+    borderRadius:
+        BorderRadius.circular(
+      20,
+    ),
+
+    onTap: () {
+
+      Navigator.push(
+        context,
+
+        MaterialPageRoute(
+          builder: (_) =>
+              CampusDetailScreen(
+            campus: campus,
+          ),
+        ),
+      );
+    },
+
+    child: Row(
+      children: [
+
+        /// IMAGE
+        ClipRRect(
+          borderRadius:
+              const BorderRadius.only(
+            topLeft:
+                Radius.circular(
+              20,
+            ),
+            bottomLeft:
+                Radius.circular(
+              20,
+            ),
+          ),
+
+          child: SizedBox(
+            width: 120,
+            height: 120,
+
+            child: campus.image.isEmpty
+
+    ? Container(
+        color: Colors.grey.shade200,
+
+        child: const Center(
+          child: Icon(
+            Icons.image,
+            size: 40,
+          ),
+        ),
+      )
+
+    : campus.image.startsWith(
+        "assets/",
+      )
+
+        ? Image.asset(
+            campus.image,
+            fit: BoxFit.cover,
+          )
+
+        : Image.memory(
+            base64Decode(
+              campus.image,
+            ),
+            fit: BoxFit.cover,
+          ),
+
+          ),
+        ),
+
+        Expanded(
+          child: Padding(
+            padding:
+                const EdgeInsets.all(
+              15,
+            ),
+
+            child: Column(
+              crossAxisAlignment:
+                  CrossAxisAlignment.start,
+
+              children: [
+ 
+                    Row(
+  children: [
+
+    Flexible(
+      child: Text(
+        campus.name,
+
+        maxLines: 1,
+
+        overflow:
+            TextOverflow.ellipsis,
+
+        style:
+            GoogleFonts.poppins(
+          fontWeight:
+              FontWeight.bold,
+          fontSize: 17,
+        ),
+      ),
+    ),
+
+    const SizedBox(
+      width: 5,
+    ),
+
+    const Icon(
+      Icons.verified,
+      color: Colors.blue,
+      size: 18,
+    ),
+  ],
+),
+                   
+
+                const SizedBox(
+                  height: 6,
+                ),
+
+                Text(
+                  "${campus.location}, ${campus.country}",
+
+                  style:
+                      GoogleFonts
+                          .poppins(
+                    color:
+                        Colors.grey,
+                    fontSize: 12,
+                  ),
+                ),
+
+                const SizedBox(
+                  height: 10,
+                ),
+
+                Row(
+                  children: [
+
+                    Container(
+                      padding:
+                          const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+
+                      decoration:
+                          BoxDecoration(
+                        color:
+                            const Color(
+                          0xffEFF6FF,
+                        ),
+
+                        borderRadius:
+                            BorderRadius.circular(
+                          10,
                         ),
                       ),
-                    );
-                  },
 
-                  onFavoriteTap:
-                      () async {
+                      child: Text(
+                        campus.worldRanking,
 
-                    await FavoriteService()
-                        .toggleFavorite(
-                      campus.id,
-                    );
-                  },
-                );
-              },
+                        style:
+                            GoogleFonts
+                                .poppins(
+                          color:
+                              const Color(
+                            0xff2563EB,
+                          ),
+
+                          fontWeight:
+                              FontWeight.bold,
+                        ),
+                      ),
+                    ),
+
+                    const Spacer(),
+
+                    IconButton(
+                      onPressed:
+                          () async {
+
+                        await FavoriteService()
+                            .toggleFavorite(
+                          campus.id,
+                        );
+                      },
+
+                      icon: const Icon(
+                        Icons.favorite,
+                        color: Colors.red,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            ),
+          ),
+      ],
+    ),
+  ),
+);
+      }
+  );
+    }
             ),
           );
-        },
-      ),
+            },
+          ),
     );
   }
+  
 }

@@ -138,7 +138,9 @@ class _HomeScreenState
 
       final user =
           snapshot.data!.data()!;
-
+        print(
+  user["profileUrl"],
+);
       return CustomSidebar(
         userName:
             user["name"] ?? "",
@@ -149,13 +151,15 @@ class _HomeScreenState
                 : "Student",
 
         profileImage:
-    user["profileImage"] ?? "",
+    user["photoUrl"] ?? "",
 
         selectedIndex: 0,
 
         onItemTap: openScreen,
       );
+      
     },
+    
   ),
 
   
