@@ -1,6 +1,10 @@
+import 'dart:convert';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:nakila/screens/auth/login_screen.dart';
 import 'manage_campuses_screen.dart';
 import 'manage_reviews_screen.dart';
 import 'manage_users_screen.dart';
@@ -126,109 +130,133 @@ class _AdminDashboardScreenState
               child: Column(
                 children: [
 
-                  const SizedBox(height: 20),
-
-                  Container(
-                    margin:
-                        const EdgeInsets.all(
-                      15,
-                    ),
-
-                    padding:
-                        const EdgeInsets.all(
-                      15,
-                    ),
-
-                    decoration:
-                        BoxDecoration(
-                      color:
-                          Colors.white
-                              .withValues(
-                        alpha: .08,
-                      ),
-
-                      borderRadius:
-                          BorderRadius.circular(
-                        20,
-                      ),
-                    ),
-
-                    child: Row(
-                      children: [
-
-                        Container(
-                          height: 55,
-                          width: 55,
-
-                          decoration:
-                              BoxDecoration(
-                            color:
-                                Colors.white,
-
-                            borderRadius:
-                                BorderRadius.circular(
-                              15,
-                            ),
-                          ),
-
-                          child:
-                              const Icon(
-                            Icons.school,
-                            color:
-                                Color(
-                              0xff2563EB,
-                            ),
-                          ),
-                        ),
-
-                        const SizedBox(
-                          width: 12,
-                        ),
-
-                        Expanded(
-                          child:
-                              Column(
-                            crossAxisAlignment:
-                                CrossAxisAlignment.start,
-
-                            children: [
-
-                              Text(
-                                "NAKILA",
-
-                                style:
-                                    GoogleFonts.poppins(
-                                  color:
-                                      Colors.white,
-                                  fontSize:
-                                      18,
-                                  fontWeight:
-                                      FontWeight.bold,
-                                ),
-                              ),
-
-                              Text(
-                                "Admin Panel",
-
-                                style:
-                                    GoogleFonts.poppins(
-                                  color:
-                                      Colors.white60,
-                                  fontSize:
-                                      12,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
                   const SizedBox(
-                    height: 20,
-                  ),
+  height: 20,
+),
 
+StreamBuilder<DocumentSnapshot>(
+  stream: FirebaseFirestore
+      .instance
+      .collection("users")
+      .doc(
+        FirebaseAuth
+            .instance
+            .currentUser!
+            .uid,
+      )
+      .snapshots(),
+
+  builder: (context, snapshot) {
+
+    final user =
+        snapshot.data?.data()
+            as Map<String, dynamic>?;
+
+    return Container(
+      margin:
+          const EdgeInsets.all(15),
+
+      padding:
+          const EdgeInsets.all(15),
+
+      decoration: BoxDecoration(
+        color:
+            Colors.white.withValues(
+          alpha: .08,
+        ),
+        borderRadius:
+            BorderRadius.circular(20),
+      ),
+
+      child: Row(
+        children: [
+
+          CircleAvatar(
+            radius: 28,
+
+            backgroundImage:
+                (user?["profileImage"] ??
+                            "")
+                        .toString()
+                        .isNotEmpty
+
+                    ? MemoryImage(
+                        base64Decode(
+                          user![
+                              "profileImage"],
+                        ),
+                      )
+
+                    : const AssetImage(
+                            "assets/Additional/Profile.png",
+                          )
+                        as ImageProvider,
+          ),
+
+          const SizedBox(
+            width: 12,
+          ),
+
+          Expanded(
+            child: Column(
+              crossAxisAlignment:
+                  CrossAxisAlignment.start,
+
+              children: [
+
+                Row(
+                  children: [
+
+                    Expanded(
+                      child: Text(
+                        user?["name"] ??
+                            "Admin",
+
+                        overflow:
+                            TextOverflow
+                                .ellipsis,
+
+                        style:
+                            GoogleFonts.poppins(
+                          color:
+                              Colors.white,
+                          fontSize: 18,
+                          fontWeight:
+                              FontWeight.bold,
+                        ),
+                      ),
+                    ),
+
+                    const Icon(
+                      Icons.verified,
+                      color: Colors.blue,
+                      size: 16,
+                    ),
+                  ],
+                ),
+
+                Text(
+                  "System Administrator",
+
+                  style:
+                      GoogleFonts.poppins(
+                    color:
+                        Colors.white60,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  },
+),
+
+const SizedBox(
+  height: 20,
+),
                   _menu(
                     0,
                     Icons.dashboard,
@@ -275,8 +303,24 @@ class _AdminDashboardScreenState
 
                       child:
                           ElevatedButton.icon(
-                        onPressed:
-                            () {},
+                        onPressed: () async {
+
+  await FirebaseAuth.instance
+      .signOut();
+
+  if (!context.mounted) return;
+
+  Navigator.pushAndRemoveUntil(
+    context,
+
+    MaterialPageRoute(
+      builder: (_) =>
+          const LoginScreen(),
+    ),
+
+    (route) => false,
+  );
+},
 
                         icon:
                             const Icon(

@@ -39,7 +39,7 @@ class WelcomeScreen extends StatelessWidget {
                   height: 260,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white.withOpacity(.08),
+                    color: Colors.white.withValues(alpha: .08),
                   ),
                 ),
               ),
@@ -52,7 +52,7 @@ class WelcomeScreen extends StatelessWidget {
                   height: 280,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white.withOpacity(.06),
+                    color: Colors.white.withValues(alpha: .06),
                   ),
                 ),
               ),
@@ -97,12 +97,12 @@ class WelcomeScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(25),
 
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(.12),
+                        color: Colors.white.withValues(alpha: .12),
                         borderRadius:
                             BorderRadius.circular(30),
 
                         border: Border.all(
-                          color: Colors.white.withOpacity(.15),
+                          color: Colors.white.withValues(alpha: .15),
                         ),
                       ),
 
