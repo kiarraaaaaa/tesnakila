@@ -63,34 +63,39 @@ class CampusCard extends StatelessWidget {
                 Hero(
   tag: campus.id,
 
-  child: campus.image.isEmpty
+  child: SizedBox(
+    height: 220,
+    width: double.infinity,
 
-      ? Container(
-          color: Colors.grey.shade200,
+    child: campus.image.isEmpty
 
-          child: const Center(
-            child: Icon(
-              Icons.image,
-              size: 70,
-            ),
-          ),
-        )
+        ? Container(
+            color: Colors.grey.shade200,
 
-      : campus.image.startsWith(
-          "assets/",
-        )
-
-          ? Image.asset(
-              campus.image,
-              fit: BoxFit.cover,
-            )
-
-          : Image.memory(
-              base64Decode(
-                campus.image,
+            child: const Center(
+              child: Icon(
+                Icons.image,
+                size: 70,
               ),
-              fit: BoxFit.cover,
             ),
+          )
+
+        : campus.image.startsWith(
+            "assets/",
+          )
+
+            ? Image.asset(
+                campus.image,
+                fit: BoxFit.cover,
+              )
+
+            : Image.memory(
+                base64Decode(
+                  campus.image,
+                ),
+                fit: BoxFit.cover,
+              ),
+  ),
 ),
                 
 

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:convert';
 
 class ManageUsersScreen extends StatefulWidget {
   const ManageUsersScreen({super.key});
@@ -209,9 +210,13 @@ backgroundImage:
       (data["photoUrl"] ?? "")
               .toString()
               .isNotEmpty
-          ? NetworkImage(
-              data["photoUrl"],
+
+          ? MemoryImage(
+              base64Decode(
+                data["photoUrl"],
+              ),
             )
+
           : null,
 
   child:
@@ -336,58 +341,62 @@ backgroundImage:
                             ),
                           ),
 
-                          PopupMenuButton(
-  itemBuilder:
-      (context) => [
+                         PopupMenuButton(
+  itemBuilder: (context) {
 
-    const PopupMenuItem(
-      value: "role",
-      child: Text(
-        "Toggle Admin",
+    if (data["role"] == "admin") {
+
+      return const [
+
+        PopupMenuItem(
+          enabled: false,
+          child: Text(
+            "Administrator",
+          ),
+        ),
+      ];
+    }
+
+    return const [
+
+      PopupMenuItem(
+        value: "role",
+        child: Text(
+          "Make Admin",
+        ),
       ),
-    ),
 
-    const PopupMenuItem(
-      value: "delete",
-      child: Text(
-        "Delete User",
+      PopupMenuItem(
+        value: "delete",
+        child: Text(
+          "Delete User",
+        ),
       ),
-    ),
-  ],
-                            onSelected:
-    (value) async {
+    ];
+  },
 
-  if (value == "role") {
+  onSelected: (value) async {
 
-  final currentRole =
-      data["role"] ?? "user";
+    if (value == "role") {
 
-  await FirebaseFirestore
-      .instance
-      .collection("users")
-      .doc(users[index].id)
-      .update({
+      await FirebaseFirestore
+          .instance
+          .collection("users")
+          .doc(users[index].id)
+          .update({
+        "role": "admin",
+      });
+    }
 
-    "role":
-        currentRole == "admin"
-            ? "user"
-            : "admin",
-  });
-}
+    if (value == "delete") {
 
-  if (value == "delete") {
-
-    await FirebaseFirestore
-        .instance
-        .collection(
-          "users",
-        )
-        .doc(
-          users[index].id,
-        )
-        .delete();
-  }
-},
+      await FirebaseFirestore
+          .instance
+          .collection("users")
+          .doc(users[index].id)
+          .delete();
+    }
+  },
                           ),
                         ],
                       ),

@@ -6,6 +6,7 @@ import '../../models/campus_model.dart';
 import '../../services/campus_service.dart';
 import 'add_campus_screen.dart';
 import 'dart:convert';
+import '../../services/activity_service.dart';
 
 class ManageCampusesScreen extends StatefulWidget {
   const ManageCampusesScreen({
@@ -204,8 +205,8 @@ class _ManageCampusesScreenState
 
                         childAspectRatio:
                             isDesktop
-                                ? 0.85
-                                : 0.95,
+                                ? 1.25
+                                : 1.05,
 
                         crossAxisSpacing:
                             15,
@@ -288,7 +289,7 @@ class _ManageCampusesScreenState
 
               ? Image.asset(
                   campus.image,
-                  height: 140,
+                  height: 110,
                   width:
                       double.infinity,
                   fit: BoxFit.cover,
@@ -298,7 +299,7 @@ class _ManageCampusesScreenState
                   base64Decode(
                     campus.image,
                   ),
-                  height: 140,
+                  height: 110,
                   width:
                       double.infinity,
                   fit: BoxFit.cover,
@@ -337,7 +338,7 @@ const SizedBox(
                                 "${campus.location}, ${campus.country}",
                               ),
 const SizedBox(
-  height: 8,
+  height: 4,
 ),
 
 Container(
@@ -388,23 +389,31 @@ Container(
   label: const Text(
     "Edit",
   ),
-    onPressed: () {
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) =>
-              EditCampusScreen(
-            campus: campus,
-          ),
-        ),
-      );
-    },
-
-    
-    
+  style: ElevatedButton.styleFrom(
+    backgroundColor:
+        const Color(
+      0xff2563EB,
+    ),
+    foregroundColor:
+        Colors.white,
   ),
-),
+
+  onPressed: () {
+
+  Navigator.push(
+    context,
+
+    MaterialPageRoute(
+      builder: (_) =>
+          EditCampusScreen(
+        campus: campus,
+      ),
+    ),
+  );
+},
+      ),
+  ),
 
                                   const SizedBox(
                                     width:
@@ -421,6 +430,12 @@ Container(
   label: const Text(
     "Delete",
   ),
+  style: ElevatedButton.styleFrom(
+  backgroundColor:
+      Colors.red,
+  foregroundColor:
+      Colors.white,
+),
 
                                       onPressed:
                                           () async {
@@ -490,7 +505,15 @@ Container(
                                           await CampusService()
                                               .deleteCampus(
                                             campus.id,
+                                            
                                           );
+                                          await ActivityService()
+    .addActivity(
+  title:
+      "${campus.name} Deleted",
+  type:
+      "campus",
+);
                                         }
                                       },
 

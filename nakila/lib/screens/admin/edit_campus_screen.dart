@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
 import '../../models/campus_model.dart';
 import '../../services/campus_service.dart';
+import '../../services/activity_service.dart';
 
 class EditCampusScreen extends StatefulWidget {
   final CampusModel campus;
@@ -189,6 +190,13 @@ programs =
         .updateCampus(
       updatedCampus,
     );
+    await ActivityService()
+    .addActivity(
+  title:
+      "${updatedCampus.name} Updated",
+  type:
+      "campus",
+);
 
     if (!mounted) return;
 

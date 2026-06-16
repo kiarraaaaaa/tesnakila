@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import '../../models/campus_model.dart';
 import '../../services/campus_service.dart';
+import '../../services/activity_service.dart';
 
 class AddCampusScreen
     extends StatefulWidget {
@@ -131,6 +132,13 @@ programs:
         .addCampus(
       campus,
     );
+    await ActivityService()
+    .addActivity(
+  title:
+      "New Campus Added: ${campus.name}",
+  type:
+      "campus",
+);
 
     if (!mounted) return;
 

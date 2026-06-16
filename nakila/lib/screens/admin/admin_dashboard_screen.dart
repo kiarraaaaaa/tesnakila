@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nakila/screens/auth/login_screen.dart';
+import 'package:nakila/services/activity_service.dart';
 import 'manage_campuses_screen.dart';
 import 'manage_reviews_screen.dart';
 import 'manage_users_screen.dart';
@@ -477,47 +478,55 @@ const SizedBox(
                           height: 20,
                         ),
 
-                        ListTile(
-                          leading:
-                              const CircleAvatar(
-                            child:
-                                Icon(
-                              Icons
-                                  .school,
-                            ),
-                          ),
+                     StreamBuilder<
+    QuerySnapshot<
+        Map<String, dynamic>>>(
+  stream:
+      ActivityService()
+          .getActivities(),
 
-                          title:
-                              const Text(
-                            "Harvard Updated",
-                          ),
+  builder: (
+    context,
+    snapshot,
+  ) {
 
-                          subtitle:
-                              const Text(
-                            "2 minutes ago",
-                          ),
-                        ),
+    if (!snapshot.hasData) {
+      return const Center(
+        child:
+            CircularProgressIndicator(),
+      );
+    }
 
-                        ListTile(
-                          leading:
-                              const CircleAvatar(
-                            child:
-                                Icon(
-                              Icons
-                                  .person,
-                            ),
-                          ),
+    final docs =
+        snapshot.data!.docs;
 
-                          title:
-                              const Text(
-                            "New User Registered",
-                          ),
+    return Column(
+      children:
+          docs.map((doc) {
 
-                          subtitle:
-                              const Text(
-                            "10 minutes ago",
-                          ),
-                        ),
+        final data =
+            doc.data();
+
+        return ListTile(
+          leading:
+              const CircleAvatar(
+            child: Icon(
+              Icons.history,
+            ),
+          ),
+
+          title: Text(
+            data["title"] ?? "",
+          ),
+
+          subtitle: Text(
+            data["type"] ?? "",
+          ),
+        );
+      }).toList(),
+    );
+  },
+),
                       ],
                     ),
                   ),

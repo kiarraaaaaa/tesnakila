@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:nakila/services/activity_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -385,7 +386,13 @@ await FirebaseFirestore.instance
       ),
     ),
   );
-
+await ActivityService()
+    .addActivity(
+  title:
+      "${nameController.text} Updated Profile",
+  type:
+      "profile",
+);
   await loadUserData();
 },
 
