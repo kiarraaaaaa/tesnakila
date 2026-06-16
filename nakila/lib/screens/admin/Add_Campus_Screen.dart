@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
@@ -204,18 +204,31 @@ class _AddCampusScreenState
                         ],
                       )
                     : ClipRRect(
-                        borderRadius:
-                            BorderRadius.circular(
-                          20,
-                        ),
+    borderRadius:
+        BorderRadius.circular(
+      20,
+    ),
 
-                        child:
-                            Image.file(
-                          imageFile!,
-                          fit: BoxFit
-                              .cover,
-                        ),
-                      ),
+    child: kIsWeb
+
+        ? Container(
+            color:
+                Colors.grey.shade200,
+
+            child:
+                const Center(
+              child: Icon(
+                Icons.image,
+                size: 70,
+              ),
+            ),
+          )
+
+        : Image.file(
+            imageFile!,
+            fit: BoxFit.cover,
+          ),
+  ),
               ),
             ),
 

@@ -1,8 +1,10 @@
-import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'dart:convert';
 
 class AdminProfileScreen extends StatefulWidget {
   const AdminProfileScreen({super.key});
@@ -15,8 +17,9 @@ class AdminProfileScreen extends StatefulWidget {
 class _AdminProfileScreenState
     extends State<AdminProfileScreen> {
 
-  Uint8List? imageBytes;
+  bool isLoading = true;
 
+Map<String, dynamic>? userData;
   final nameController =
       TextEditingController(
     text: "Administrator",
@@ -27,42 +30,96 @@ class _AdminProfileScreenState
     text: "admin@nakila.com",
   );
 
-  Future<void> Future<void> pickImage() async {
+  Future<void> pickImage() async {
 
   final image =
       await ImagePicker().pickImage(
     source: ImageSource.gallery,
-    imageQuality: 80,
+    imageQuality: 70,
   );
 
-  if (image != null) {
+  if (image == null) return;
 
-    imageBytes =
-        await image.readAsBytes();
+  final bytes =
+      await image.readAsBytes();
 
-    setState(() {});
-  }
-} async {
+  final base64Image =
+      base64Encode(bytes);
 
-    final image =
-        await ImagePicker().pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 80,
-    );
+  final uid =
+      FirebaseAuth
+          .instance
+          .currentUser!
+          .uid;
 
-    if (image != null) {
+  await FirebaseFirestore
+      .instance
+      .collection("users")
+      .doc(uid)
+      .update({
 
-      setState(() {
-        profileImage =
-            File(image.path);
-      });
-    }
-  }
+    "profileImage":
+        base64Image,
+  });
+
+  await loadAdmin();
+}
+
+  Future<void> loadAdmin() async {
+
+  final uid =
+      FirebaseAuth
+          .instance
+          .currentUser!
+          .uid;
+
+  final doc =
+      await FirebaseFirestore
+          .instance
+          .collection("users")
+          .doc(uid)
+          .get();
+
+ if (!doc.exists) {
+  setState(() {
+    isLoading = false;
+  });
+  return;
+}
+
+  userData = doc.data();
+
+  nameController.text =
+      userData?["name"] ?? "";
+
+  emailController.text =
+      userData?["email"] ?? "";
+
+  setState(() {
+    isLoading = false;
+  });
+}
+
+  @override
+void initState() {
+  super.initState();
+
+  loadAdmin();
+}
 
   @override
   Widget build(BuildContext context) {
+if (isLoading) {
 
+  return const Scaffold(
+    body: Center(
+      child:
+          CircularProgressIndicator(),
+    ),
+  );
+}
     return Scaffold(
+      
       backgroundColor:
           const Color(0xffF8FAFC),
 
@@ -70,9 +127,11 @@ class _AdminProfileScreenState
         centerTitle: true,
         title: const Text(
           "Admin Profile",
+          
         ),
+        
       ),
-
+    
       body: SingleChildScrollView(
         padding:
             const EdgeInsets.all(
@@ -91,15 +150,22 @@ class _AdminProfileScreenState
                   CircleAvatar(
                     radius: 70,
 
-                    backgroundImage:
-                        profileImage != null
-                            ? FileImage(
-                                profileImage!,
-                              )
-                            : const AssetImage(
-                                    "assets/Additional/Profile.png",
-                                  )
-                                as ImageProvider,
+                   backgroundImage:
+    (userData?["profileImage"] ??
+                "")
+            .toString()
+            .isNotEmpty
+
+        ? MemoryImage(
+            base64Decode(
+              userData![
+                  "profileImage"],
+            ),
+          )
+
+        : const AssetImage(
+            "assets/Additional/Profile.png",
+          ) as ImageProvider,
                   ),
 
                   Positioned(
@@ -145,7 +211,7 @@ class _AdminProfileScreenState
               children: [
 
                 Text(
-                  "Administrator",
+  userData?["name"] ?? "",
 
                   style:
                       GoogleFonts
@@ -161,10 +227,11 @@ class _AdminProfileScreenState
                   width: 5,
                 ),
 
-                const Icon(
-                  Icons.verified,
-                  color: Colors.blue,
-                ),
+                if (userData?["verified"] == true)
+  const Icon(
+    Icons.verified,
+    color: Colors.blue,
+  ),
               ],
             ),
 
@@ -173,7 +240,9 @@ class _AdminProfileScreenState
             ),
 
             Text(
-              "Super Admin",
+  (userData?["role"] ?? "admin")
+      .toString()
+      .toUpperCase(),
 
               style:
                   GoogleFonts
@@ -273,20 +342,38 @@ class _AdminProfileScreenState
 
                     child:
                         ElevatedButton(
-                      onPressed:
-                          () {
+                      onPressed: () async {
 
-                        ScaffoldMessenger.of(
-                          context,
-                        ).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              "Admin Profile Updated",
-                            ),
-                          ),
-                        );
-                      },
+  final uid =
+      FirebaseAuth
+          .instance
+          .currentUser!
+          .uid;
 
+  await FirebaseFirestore
+      .instance
+      .collection("users")
+      .doc(uid)
+      .update({
+
+    "name":
+        nameController.text,
+  });
+
+  if (!mounted) return;
+
+  ScaffoldMessenger.of(
+    context,
+  ).showSnackBar(
+    const SnackBar(
+      content: Text(
+        "Profile Updated",
+      ),
+    ),
+  );
+
+  loadAdmin();
+},
                       style:
                           ElevatedButton.styleFrom(
                         backgroundColor:

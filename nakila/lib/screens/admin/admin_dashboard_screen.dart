@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'manage_campuses_screen.dart';
+import 'manage_reviews_screen.dart';
+import 'manage_users_screen.dart';
+import 'admin_profile_screen.dart';
 
 class AdminDashboardScreen extends StatefulWidget {
   const AdminDashboardScreen({super.key});
@@ -511,10 +515,55 @@ class _AdminDashboardScreenState
           : Colors.transparent,
 
       onTap: () {
-        setState(() {
-          selectedIndex = index;
-        });
-      },
+
+  setState(() {
+    selectedIndex = index;
+  });
+
+  if (index == 1) {
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) =>
+            const ManageCampusesScreen(),
+      ),
+    );
+  }
+
+  if (index == 2) {
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) =>
+            const ManageReviewsScreen(),
+      ),
+    );
+  }
+
+  if (index == 3) {
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) =>
+            const ManageUsersScreen(),
+      ),
+    );
+  }
+
+  if (index == 4) {
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) =>
+            const AdminProfileScreen(),
+      ),
+    );
+  }
+},
     );
   }
   }

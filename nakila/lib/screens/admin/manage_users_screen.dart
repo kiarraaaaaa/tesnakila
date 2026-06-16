@@ -300,9 +300,13 @@ backgroundImage:
                                   decoration:
                                       BoxDecoration(
                                     color:
-                                        const Color(
-                                      0xffE8F5E9,
-                                    ),
+    data["role"] == "admin"
+        ? const Color(
+            0xffFEE2E2,
+          )
+        : const Color(
+            0xffE8F5E9,
+          ),
 
                                     borderRadius:
                                         BorderRadius.circular(
@@ -355,25 +359,21 @@ backgroundImage:
 
   if (value == "role") {
 
-    final currentRole =
-        data["role"] ?? "user";
+  final currentRole =
+      data["role"] ?? "user";
 
-    await FirebaseFirestore
-        .instance
-        .collection(
-          "users",
-        )
-        .doc(
-          users[index].id,
-        )
-        .update({
+  await FirebaseFirestore
+      .instance
+      .collection("users")
+      .doc(users[index].id)
+      .update({
 
-      "role":
-          currentRole == "admin"
-              ? "user"
-              : "admin",
-    });
-  }
+    "role":
+        currentRole == "admin"
+            ? "user"
+            : "admin",
+  });
+}
 
   if (value == "delete") {
 

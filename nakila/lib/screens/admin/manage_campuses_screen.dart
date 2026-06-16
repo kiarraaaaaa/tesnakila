@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'edit_campus_screen.dart';
 import '../../models/campus_model.dart';
 import '../../services/campus_service.dart';
 import 'add_campus_screen.dart';
@@ -284,21 +284,28 @@ class _ManageCampusesScreenState
                               Row(
                                 children: [
 
-                                  Expanded(
-                                    child:
-                                        ElevatedButton(
-                                      onPressed:
-                                          () {
+                                 Expanded(
+  child:
+      ElevatedButton(
+    onPressed: () {
 
-                                        // edit nanti
-                                      },
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) =>
+              EditCampusScreen(
+            campus: campus,
+          ),
+        ),
+      );
+    },
 
-                                      child:
-                                          const Text(
-                                        "Edit",
-                                      ),
-                                    ),
-                                  ),
+    child:
+        const Text(
+      "Edit",
+    ),
+  ),
+),
 
                                   const SizedBox(
                                     width:
