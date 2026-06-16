@@ -5,6 +5,7 @@ import 'edit_campus_screen.dart';
 import '../../models/campus_model.dart';
 import '../../services/campus_service.dart';
 import 'add_campus_screen.dart';
+import 'dart:convert';
 
 class ManageCampusesScreen extends StatefulWidget {
   const ManageCampusesScreen({
@@ -203,8 +204,8 @@ class _ManageCampusesScreenState
 
                         childAspectRatio:
                             isDesktop
-                                ? 1.4
-                                : 2.2,
+                                ? 0.85
+                                : 0.95,
 
                         crossAxisSpacing:
                             15,
@@ -234,22 +235,79 @@ class _ManageCampusesScreenState
                             16,
                           ),
 
-                          decoration:
-                              BoxDecoration(
-                            color:
-                                Colors.white,
+                          decoration: BoxDecoration(
+  color: Colors.white,
 
-                            borderRadius:
-                                BorderRadius.circular(
-                              20,
-                            ),
-                          ),
+  borderRadius:
+      BorderRadius.circular(20),
+
+  boxShadow: [
+    BoxShadow(
+      color:
+          Colors.black.withValues(
+        alpha: .08,
+      ),
+      blurRadius: 15,
+      offset:
+          const Offset(0, 5),
+    ),
+  ],
+),
 
                           child: Column(
                             crossAxisAlignment:
                                 CrossAxisAlignment.start,
 
                             children: [
+                              ClipRRect(
+  borderRadius:
+      BorderRadius.circular(
+    15,
+  ),
+
+  child:
+      campus.image.isEmpty
+
+          ? Container(
+              height: 140,
+              color:
+                  Colors.grey.shade200,
+
+              child:
+                  const Center(
+                child: Icon(
+                  Icons.image,
+                  size: 50,
+                ),
+              ),
+            )
+
+          : campus.image.startsWith(
+              "assets/",
+            )
+
+              ? Image.asset(
+                  campus.image,
+                  height: 140,
+                  width:
+                      double.infinity,
+                  fit: BoxFit.cover,
+                )
+
+              : Image.memory(
+                  base64Decode(
+                    campus.image,
+                  ),
+                  height: 140,
+                  width:
+                      double.infinity,
+                  fit: BoxFit.cover,
+                ),
+),
+
+const SizedBox(
+  height: 12,
+),
 
                               Text(
                                 campus.name,
@@ -278,7 +336,43 @@ class _ManageCampusesScreenState
                               Text(
                                 "${campus.location}, ${campus.country}",
                               ),
+const SizedBox(
+  height: 8,
+),
 
+Container(
+  padding:
+      const EdgeInsets.symmetric(
+    horizontal: 10,
+    vertical: 5,
+  ),
+
+  decoration: BoxDecoration(
+    color:
+        const Color(
+      0xffEFF6FF,
+    ),
+
+    borderRadius:
+        BorderRadius.circular(
+      12,
+    ),
+  ),
+
+  child: Text(
+    campus.worldRanking,
+
+    style:
+        GoogleFonts.poppins(
+      color:
+          const Color(
+        0xff2563EB,
+      ),
+      fontWeight:
+          FontWeight.bold,
+    ),
+  ),
+),
                               const Spacer(),
 
                               Row(
@@ -286,7 +380,14 @@ class _ManageCampusesScreenState
 
                                  Expanded(
   child:
-      ElevatedButton(
+      ElevatedButton.icon(
+  icon: const Icon(
+    Icons.edit,
+  ),
+
+  label: const Text(
+    "Edit",
+  ),
     onPressed: () {
 
       Navigator.push(
@@ -300,10 +401,8 @@ class _ManageCampusesScreenState
       );
     },
 
-    child:
-        const Text(
-      "Edit",
-    ),
+    
+    
   ),
 ),
 
@@ -314,12 +413,14 @@ class _ManageCampusesScreenState
 
                                   Expanded(
                                     child:
-                                        ElevatedButton(
-                                      style:
-                                          ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            Colors.red,
-                                      ),
+                                        ElevatedButton.icon(
+  icon: const Icon(
+    Icons.delete,
+  ),
+
+  label: const Text(
+    "Delete",
+  ),
 
                                       onPressed:
                                           () async {
@@ -393,10 +494,7 @@ class _ManageCampusesScreenState
                                         }
                                       },
 
-                                      child:
-                                          const Text(
-                                        "Delete",
-                                      ),
+                                     
                                     ),
                                   ),
                                 ],
